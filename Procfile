@@ -1,2 +1,2 @@
 nginx: nginx
-dockergen: docker-gen -watch -notify "nginx -s reload" /app/nginx.tmpl /etc/nginx/conf.d/default.conf
+ranchergen: rancher-gen --config "/app/rancher-gen.conf"
