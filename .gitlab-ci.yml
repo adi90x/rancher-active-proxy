@@ -1,0 +1,8 @@
+build-image:
+ image: docker:1.11
+ services:
+  - docker:dind
+ script:
+    - docker version
+    - docker build -t adi90x/rancher-active-proxy:latest
+    - ls
