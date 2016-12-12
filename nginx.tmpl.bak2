@@ -1,4 +1,5 @@
-{{ define "upstream" }}
+
+{{ define "rancher-upstream" }}
 	#Acces through rancher managed network
 	server {{.IP}}:{{.PORT}};
 {{ end }}
@@ -32,10 +33,9 @@ log_format vhost '$host $remote_addr - $remote_user [$time_local] '
 
 access_log off;
 
-{{- if (exists "/etc/nginx/proxy.conf") }}
+{{ if (exists "/etc/nginx/proxy.conf") }}
 include /etc/nginx/proxy.conf;
-{{- else }}
-
+{{ else }}
 # HTTP 1.1 support
 proxy_http_version 1.1;
 proxy_buffering off;
@@ -49,7 +49,7 @@ proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
 
 # Mitigate httpoxy attack (see README for details)
 proxy_set_header Proxy "";
-{{- end }}
+{{ end }}
 
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
@@ -58,7 +58,7 @@ server {
 	return 503;
 }
 
-{{- if (and (exists "/etc/nginx/certs/default.crt") (exists "/etc/nginx/certs/default.key")) }}
+{{ if (and (exists "/etc/nginx/certs/default.crt") (exists "/etc/nginx/certs/default.key")) }}
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 443 ssl http2;
@@ -69,54 +69,66 @@ server {
 	ssl_certificate /etc/nginx/certs/default.crt;
 	ssl_certificate_key /etc/nginx/certs/default.key;
 }
-{{- end }}
-
+{{ end }}
 
 {{- range $host, $services := services | groupByMulti "rap.host" ","}}
 
 upstream {{ $host }} {
-{{range $service := $services}}
-{{- $addrLen := len $service.Ports }}
-{{- range $cont := $service.Containers}}
-        {{- if eq $addrLen 1 }}
-	{{- $intport := (first $service.Ports).InternalPort }}
-	{{- template "upstream" (dict "IP" $cont.Address "PORT" $intport) }}
-	{{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var, falling back to standard web port 80 */}}
-	{{- else }}
-		{{- $port := .Labels.GetValue "rap.port" "80" }}
-		{{- template "upstream" (dict "IP" $cont.Address "PORT" $port) }}
-	{{- end }}
-{{- end -}}
+	{{- range $service := $services}}
+	{{- $addrLen := len $service.Ports }}
+		{{- range $cont := $service.Containers}}
+			{{ if eq $addrLen 1 }}
+				{{- $intport := (first $service.Ports).InternalPort }}
+				{{- template "rancher-upstream" (dict "IP" $cont.Address "PORT" $intport) }}
+				{{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var, fallin$
+			{{ else }}
+                {{- $port := .Labels.GetValue "rap.port" "80" }}
+                {{- template "rancher-upstream" (dict "IP" $cont.Address "PORT" $port) }}
+        {{- end }}
+	{{- end}}
 
 }
 
-{{ $default_host := or (env "DEFAULT_HOST") "" }}
-{{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
-{{- $proto := $service.Labels.GetValue "rap.virtual_proto" "http"  }}
-{{- $https_method := $service.Labels.GetValue "rap.https_method" "redirect" }}
+{{ $default_host := $service.Labels.GetValue "rap.default_host" " " }}
+{{ $default_server := index (dict $host "" $default_host "default_server") $host }}
 
-{{- $certName := $service.Labels.GetValue "rap.cert_name" }}
+{{/* Get the VIRTUAL_PROTO defined by service w/ the same vhost, falling back to "http" */}}
+{{ $proto := $service.Labels.GetValue "rap.virtual_proto" "http"  }}
 
-{{- $vhostCert := (closest (dirList "/etc/nginx/certs") (printf "%s.crt" $host))}}
+{{/* Get the HTTPS_METHOD defined by containers w/ the same vhost, falling back to "redirect" */}}
+{{ $https_method := $service.Labels.GetValue "rap.https_method" "redirect" }}
 
-{{- $vhostCert := trimSuffix ".crt" $vhostCert }}
-{{- $vhostCert := trimSuffix ".key" $vhostCert }}
-{{- $cert := (coalesce $certName $vhostCert) }}
+{{/* Get the first cert name defined by containers w/ the same vhost */}}
+{{ $certName := $service.Labels.GetValue "rap.cert_name" }}
 
-{{- $is_https := (and (ne $cert "") (exists (printf "/etc/nginx/certs/%s.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.key" $cert))) }}
+{{/* Get the best matching cert  by name for the vhost. */}}
+{{ $vhostCert := (closest (dirList "/etc/nginx/certs") (printf "%s.crt" $host))}}
 
-{{- if $is_https }}
+{{/* vhostCert is actually a filename so remove any suffixes since they are added later */}}
+{{ $vhostCert := trimSuffix ".crt" $vhostCert }}
+{{ $vhostCert := trimSuffix ".key" $vhostCert }}
 
-{{- if eq $https_method "redirect" }} server {
+{{/* Use the cert specified on the container or fallback to the best vhost match */}}
+{{ $cert := (coalesce $certName $vhostCert) }}
+
+{{ $is_https := (and (ne $cert "") (exists (printf "/etc/nginx/certs/%s.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.key" $cert))) }}
+
+{{ if $is_https }}
+
+{{ if eq $https_method "redirect" }}
+server {
 	server_name {{ $host }};
 	listen 80 {{ $default_server }};
 	access_log /var/log/nginx/access.log vhost;
 	return 301 https://$host$request_uri;
 }
-{{- end}}
+{{ end }}
 
-server {
+
+
+	location / {
+		{{ if eq $proto "uwsgi" }}server {
 	server_name {{ $host }};
 	listen 443 ssl http2 {{ $default_server }};
 	access_log /var/log/nginx/access.log vhost;
@@ -132,76 +144,71 @@ server {
 	ssl_certificate /etc/nginx/certs/{{ (printf "%s.crt" $cert) }};
 	ssl_certificate_key /etc/nginx/certs/{{ (printf "%s.key" $cert) }};
 
-	{{- if (exists (printf "/etc/nginx/certs/%s.dhparam.pem" $cert)) }}
+	{{ if (exists (printf "/etc/nginx/certs/%s.dhparam.pem" $cert)) }}
 	ssl_dhparam {{ printf "/etc/nginx/certs/%s.dhparam.pem" $cert }};
-	{{- end }}
+	{{ end }}
 
-	{{- if (ne $https_method "noredirect") }}
+	{{ if (ne $https_method "noredirect") }}
 	add_header Strict-Transport-Security "max-age=31536000";
-	{{- end }}
+	{{ end }}
 
-	{{- if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
+	{{ if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
 	include {{ printf "/etc/nginx/vhost.d/%s" $host }};
-	{{- else if (exists "/etc/nginx/vhost.d/default") }}
+	{{ else if (exists "/etc/nginx/vhost.d/default") }}
 	include /etc/nginx/vhost.d/default;
-	{{- end }}
-
-	location / {
-		{{- if eq $proto "uwsgi" }}
+	{{ end }}
 		include uwsgi_params;
 		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
-		{{- else }}
+		{{ else }}
 		proxy_pass {{ trim $proto }}://{{ trim $host }};
-		{{- end }}
-		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
+		{{ end }}
+		{{ if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
-		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
-        {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
-        include /etc/nginx/vhost.d/default_location;
-        {{- end }}
+		{{ end }}
+                {{ if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
+                include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+                {{ else if (exists "/etc/nginx/vhost.d/default_location") }}
+                include /etc/nginx/vhost.d/default_location;
+                {{ end }}
 	}
 }
 
 {{ end -}}
 
-
-{{- if or (not $is_https) (eq $https_method "noredirect") -}}
+{{ if or (not $is_https) (eq $https_method "noredirect") }}
 
 server {
 	server_name {{ $host }};
 	listen 80 {{ $default_server }};
 	access_log /var/log/nginx/access.log vhost;
 
-	{{- if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
+	{{ if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
 	include {{ printf "/etc/nginx/vhost.d/%s" $host }};
-	{{- else if (exists "/etc/nginx/vhost.d/default") }}
+	{{ else if (exists "/etc/nginx/vhost.d/default") }}
 	include /etc/nginx/vhost.d/default;
-	{{- end }}
+	{{ end }}
 
 	location / {
-		{{- if eq $proto "uwsgi" }}
+		{{ if eq $proto "uwsgi" }}
 		include uwsgi_params;
 		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
-		{{- else }}
+		{{ else }}
 		proxy_pass {{ trim $proto }}://{{ trim $host }};
-		{{- end }}
-		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
+		{{ end }}
+		{{ if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
-		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
-        {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
-        include /etc/nginx/vhost.d/default_location;
-        {{- end }}
+		{{ end }}
+                {{ if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
+                include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+                {{ else if (exists "/etc/nginx/vhost.d/default_location") }}
+                include /etc/nginx/vhost.d/default_location;
+                {{ end }}
 	}
 }
 
-{{- if (and (not $is_https) (exists "/etc/nginx/certs/default.crt") (exists "/etc/nginx/certs/default.key")) }}
-
+{{ if (and (not $is_https) (exists "/etc/nginx/certs/default.crt") (exists "/etc/nginx/certs/default.key")) }}
 server {
 	server_name {{ $host }};
 	listen 443 ssl http2 {{ $default_server }};
@@ -211,8 +218,8 @@ server {
 	ssl_certificate /etc/nginx/certs/default.crt;
 	ssl_certificate_key /etc/nginx/certs/default.key;
 }
-{{- end -}}
+{{ end }}
+{{ end }}
 
-{{- end }}
-{{- end }}
-{{- end }}
+{{ end }}
+{{ end }}
