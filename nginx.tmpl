@@ -96,13 +96,12 @@ upstream {{ $host }} {
 {{- $proto := $service.Labels.GetValue "rap.virtual_proto" "http"  }}
 {{- $https_method := $service.Labels.GetValue "rap.https_method" "redirect" }}
 
-{{- $certName := $service.Labels.GetValue "rap.cert_name" }}
-
 {{- $vhostCert := (closest (dirList "/etc/nginx/certs") (printf "%s.crt" $host))}}
 
-{{- $vhostCert := trimSuffix ".crt" $vhostCert }}
-{{- $vhostCert := trimSuffix ".key" $vhostCert }}
-{{- $cert := (coalesce $certName $vhostCert) }}
+{{- $vhostCert := trimSuffix $vhostCert ".crt" }}
+{{- $vhostCert := trimSuffix $vhostCert ".key" }}
+
+{{- $cert := $service.Labels.GetValue "rap.cert_name" $vhostCert }}
 
 {{- $is_https := (and (ne $cert "") (exists (printf "/etc/nginx/certs/%s.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.key" $cert))) }}
 
