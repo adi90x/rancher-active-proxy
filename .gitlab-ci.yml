@@ -6,4 +6,4 @@ build-image:
     - docker version
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker build -t adi90x/rancher-active-proxy:latest .
-    - ls
+    - docker push registry.gitlab.com/adi90x/rancher-active-proxy
