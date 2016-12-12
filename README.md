@@ -42,6 +42,7 @@ The only environmental value that could be set to adi90x/rancher-active-proxy is
 | `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
 | `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
 
+***
 
 ### Below is taken from jwilder/nginx-proxy readme.
 
