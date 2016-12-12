@@ -20,12 +20,11 @@ Then start any containers you want proxied with a label `rap.host=subdomain.youd
 
 The containers being proxied must [expose](https://docs.docker.com/reference/run/#expose-incoming-ports) the port to be proxied, either by using the `EXPOSE` directive in their `Dockerfile` or by using the `--expose` flag to `docker run` or `docker create`.
 
-Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the VIRTUAL_HOST env var set.
+Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the rap.host label set.
 
 The only environmental value that could be set to adi90x/rancher-active-proxy is : `DEFAULT_HOST : foo.bar.com`
 
 #### Quick Summary of available labels.
-
 
 |       Label        |            Description         |
 | ------------------ | ------------------------------ |
@@ -35,13 +34,18 @@ The only environmental value that could be set to adi90x/rancher-active-proxy is
 | `rap.cert_name`    | Certificat name to use for the virtual host. Default `rap.host`
 | `rap.https_method` | Https method (redirect, noredirect). Default : `redirect`
 
+#### Quick Summary of interesting volume to mount.
+
+|       Path            |            Description         |
+| --------------------- | ------------------------------ |
+| `/etc/nginx/certs`    | Certificate used for https
+| `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
+| `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
 
 
+### Below is taken from jwilder/nginx-proxy readme.
 
-| `check-cmd`        | Command to check the content before updating the destination. <br> Use the `{{staging}}` placeholder to reference the staging file.
-| `notify-cmd`       | Command to run after the destination file has been updated.
-| `notify-output`    | Print the result of the notify command to STDOUT.
-| `version`          | Show application version and exit.
+Everything should be the same, except you need to use label instead of environmental var.
 
 ### Multiple Ports
 
