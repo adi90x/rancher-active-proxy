@@ -4,5 +4,5 @@ build-image:
   - docker:dind
  script:
     - docker version
-    - docker build -t adi90x/rancher-active-proxy:latest
+    - docker build -t adi90x/rancher-active-proxy:latest .
     - ls
