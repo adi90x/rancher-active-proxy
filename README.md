@@ -1,49 +1,28 @@
-![nginx 1.11.6](https://img.shields.io/badge/nginx-1.11.6-brightgreen.svg) ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) [![Build Status](https://travis-ci.org/jwilder/nginx-proxy.svg?branch=master)](https://travis-ci.org/jwilder/nginx-proxy) [![](https://img.shields.io/docker/stars/jwilder/nginx-proxy.svg)](https://hub.docker.com/r/jwilder/nginx-proxy 'DockerHub') [![](https://img.shields.io/docker/pulls/jwilder/nginx-proxy.svg)](https://hub.docker.com/r/jwilder/nginx-proxy 'DockerHub')
+![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) 
 
+## Rancher Active Proxy
 
-nginx-proxy sets up a container running nginx and [docker-gen][1].  docker-gen generates reverse proxy configs for nginx and reloads nginx when containers are started and stopped.
+Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) to use with [Rancher](http://rancher.com).
 
-See [Automated Nginx Reverse Proxy for Docker][2] for why you might want to use this.
+Rancher Active Proxy replace docker-gen by Rancher-gen-rap [adi90x/rancher-gen-rap](https://github.com/adi90x/rancher-gen-rap) ( a fork of the also excellent [janeczku/go-rancher-gen](https://github.com/janeczku/go-rancher-gen)
+
+Rancher Active Proxy use label instead of environmental value.
 
 ### Usage
 
-To run it:
+Minimal Params To run it:
 
-    $ docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy
+    $ docker run -d -p 80:80  adi90x/rancher-active-proxy
 
-Then start any containers you want proxied with an env var `VIRTUAL_HOST=subdomain.youdomain.com`
+Then start any containers you want proxied with a label `rap.host=subdomain.youdomain.com`
 
-    $ docker run -e VIRTUAL_HOST=foo.bar.com  ...
+    $ docker run -l rap.host=foo.bar.com  ...
 
 The containers being proxied must [expose](https://docs.docker.com/reference/run/#expose-incoming-ports) the port to be proxied, either by using the `EXPOSE` directive in their `Dockerfile` or by using the `--expose` flag to `docker run` or `docker create`.
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the VIRTUAL_HOST env var set.
 
-### Docker Compose
 
-```yaml
-version: '2'
-services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-
-  whoami:
-    image: jwilder/whoami
-    container_name: whoami
-    environment:
-      - VIRTUAL_HOST=whoami.local
-```
-
-```shell
-$ docker-compose up
-$ curl -H "Host: whoami.local" localhost
-I'm 5b129ab83266
-```
 
 ### Multiple Ports
 
