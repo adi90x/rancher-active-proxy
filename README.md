@@ -22,7 +22,26 @@ The containers being proxied must [expose](https://docs.docker.com/reference/run
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the VIRTUAL_HOST env var set.
 
+The only environmental value that could be set to adi90x/rancher-active-proxy is : `DEFAULT_HOST : foo.bar.com`
 
+#### Quick Summary of available labels.
+
+
+|       Label        |            Description         |
+| ------------------ | ------------------------------ |
+| `rap.host`         | Virtual host to use ( several value could be separate by `,`
+| `rap.port`         | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
+| `rap.proto`        | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
+| `rap.cert_name`    | Certificat name to use for the virtual host. Default `rap.host`
+| `rap.https_method` | Https method (redirect, noredirect). Default : `redirect`
+
+
+
+
+| `check-cmd`        | Command to check the content before updating the destination. <br> Use the `{{staging}}` placeholder to reference the staging file.
+| `notify-cmd`       | Command to run after the destination file has been updated.
+| `notify-output`    | Print the result of the notify command to STDOUT.
+| `version`          | Show application version and exit.
 
 ### Multiple Ports
 
