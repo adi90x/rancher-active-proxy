@@ -1,11 +1,8 @@
 FROM nginx:1.11.6-alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-RUN apk add --no-cache ca-certificates
-RUN apk add --no-cache curl
-RUN apk add --no-cache unzip
-RUN apk add --no-cache bash
- 
+RUN apk add --no-cache ca-certificates curl unzip bash
+
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
  && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
@@ -18,7 +15,8 @@ ARG TOKEN_RANCHER_GEN
 
 RUN curl --header "PRIVATE-TOKEN: $TOKEN_RANCHER_GEN" "https://gitlab.com/api/v3/projects/2130165/builds/artifacts/master/download?job=compile-go" > /tmp/rancher-gen-rap.zip \
 	&& unzip /tmp/rancher-gen-rap.zip -d /usr/local/bin \
-	&& chmod +x /usr/local/bin/rancher-gen
+	&& chmod +x /usr/local/bin/rancher-gen \
+	&& rm -f /tmp/rancher-gen-rap.zip
 	
 COPY . /app/
 WORKDIR /app/
