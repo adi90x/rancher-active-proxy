@@ -31,7 +31,7 @@ RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -
 
 VOLUME ["/etc/nginx/certs"]
 
-ENV DEBUG=false              \
+ENV DEBUG=true              \
 	DOCKER_GEN_VERSION=0.7.3 \
 	DOCKER_HOST=unix:///var/run/docker.sock
 
