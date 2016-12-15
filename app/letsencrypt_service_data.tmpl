@@ -1,0 +1,13 @@
+{{- $Default_email := or (env "DEFAULT_EMAIL") "" -}}
+
+LETSENCRYPT_CONTAINERS=({{- range $host, $services := services | groupByMulti "rap.host" ","}}{{range $service := $services}} '{{$service.Name}}'{{end}}{{end}})
+{{ range $host, $services := services | groupByMulti "rap.host" "," -}}
+
+{{- range $service := $services }}
+
+LETSENCRYPT_{{$service.Name}}_HOST=( '{{$host}}' )
+LETSENCRYPT_{{$service.Name}}_EMAIL="{{.Labels.GetValue "rap.le_email" $Default_email}}"
+LETSENCRYPT_{{$service.Name}}_TEST="{{.Labels.GetValue "rap.le_test"}}"
+
+{{- end -}}
+{{- end -}}
