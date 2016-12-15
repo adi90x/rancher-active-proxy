@@ -31,4 +31,5 @@ RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -
 
 VOLUME ["/etc/nginx/certs"]
 
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
