@@ -31,5 +31,9 @@ RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -
 
 VOLUME ["/etc/nginx/certs"]
 
+ENV DEBUG=false              \
+	DOCKER_GEN_VERSION=0.7.3 \
+	DOCKER_HOST=unix:///var/run/docker.sock
+
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
