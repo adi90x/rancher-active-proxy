@@ -78,6 +78,7 @@ upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
 {{- range $cont := $service.Containers}}
+    {{ - if eq $cont.State "running"}}
         {{- if eq $addrLen 1 }}
 	{{- $intport := (first $service.Ports).InternalPort }}
 	{{- template "upstream" (dict "IP" $cont.Address "PORT" $intport) }}
@@ -86,10 +87,13 @@ upstream {{ $host }} {
 		{{- $port := .Labels.GetValue "rap.port" "80" }}
 		{{- template "upstream" (dict "IP" $cont.Address "PORT" $port) }}
 	{{- end }}
+	{{- end -}}
 {{- end -}}
-
+{{- end -}}
 }
 
+
+{{range $service := $services}}
 {{ $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
