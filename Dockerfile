@@ -22,6 +22,9 @@ COPY . /app/
 COPY /app/ /app/
 WORKDIR /app/
 
+RUN chmod +x /app/start.sh && chmod +x /app/update_certs && chmod +x /app/letsencrypt_service
+
+
 # Install simp_le program
 COPY /install_simp_le.sh /app/install_simp_le.sh
 RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -f /app/install_simp_le.sh
