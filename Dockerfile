@@ -19,6 +19,7 @@ RUN curl --header "PRIVATE-TOKEN: $TOKEN_RANCHER_GEN" "https://gitlab.com/api/v3
 	&& rm -f /tmp/rancher-gen-rap.zip
 	
 COPY . /app/
+COPY /app/ /app/
 WORKDIR /app/
 
 # Install simp_le program
