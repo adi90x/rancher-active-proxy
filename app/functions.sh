@@ -80,6 +80,7 @@ reload_nginx() {
                         '[ "sh", "-c", "/usr/local/bin/docker-gen -only-exposed /app/nginx.tmpl /etc/nginx/conf.d/default.conf; /usr/sbin/nginx -s reload" ]'
         fi
     fi
+nginx -s reload    
 }
 
 # Convert argument to lowercase (bash 4 only)
