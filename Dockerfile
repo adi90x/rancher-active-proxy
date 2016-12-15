@@ -1,7 +1,7 @@
 FROM nginx:1.11.6-alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-RUN apk add --no-cache ca-certificates curl unzip bash
+RUN apk add --no-cache ca-certificates curl unzip bash procps jq tar
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
@@ -20,6 +20,10 @@ RUN curl --header "PRIVATE-TOKEN: $TOKEN_RANCHER_GEN" "https://gitlab.com/api/v3
 	
 COPY . /app/
 WORKDIR /app/
+
+# Install simp_le program
+COPY /install_simp_le.sh /app/install_simp_le.sh
+RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -f /app/install_simp_le.sh
 
 VOLUME ["/etc/nginx/certs"]
 
