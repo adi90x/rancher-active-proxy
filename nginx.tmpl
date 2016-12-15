@@ -74,6 +74,7 @@ server {
 
 {{- range $host, $services := services | groupByMulti "rap.host" ","}}
 
+
 upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
@@ -89,23 +90,24 @@ upstream {{ $host }} {
 	{{- end }}
 	{{- end -}}
 {{- end -}}
-{{- end -}}
+
+{{end}}
 }
 
+{{ $first_service := first $services }}
 
-{{range $service := $services}}
 {{ $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
-{{- $proto := $service.Labels.GetValue "rap.proto" "http"  }}
-{{- $https_method := $service.Labels.GetValue "rap.https_method" "redirect" }}
+{{- $proto := $first_service.Labels.GetValue "rap.proto" "http"  }}
+{{- $https_method := $first_service.Labels.GetValue "rap.https_method" "redirect" }}
 
 {{- $vhostCert := (closest (dirList "/etc/nginx/certs") (printf "%s.crt" $host))}}
 
 {{- $vhostCert := trimSuffix $vhostCert ".crt" }}
 {{- $vhostCert := trimSuffix $vhostCert ".key" }}
 
-{{- $cert := $service.Labels.GetValue "rap.cert_name" $vhostCert }}
+{{- $cert := $first_service.Labels.GetValue "rap.cert_name" $vhostCert }}
 
 {{- $is_https := (and (ne $cert "") (exists (printf "/etc/nginx/certs/%s.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.key" $cert))) }}
 
@@ -216,6 +218,5 @@ server {
 }
 {{- end -}}
 
-{{- end }}
 {{- end }}
 {{- end }}
