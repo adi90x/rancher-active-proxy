@@ -78,7 +78,7 @@ upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
 {{- range $cont := $service.Containers}}
-    {{ - if eq $cont.State "running"}}
+    {{- if eq $cont.State "running"}}
         {{- if eq $addrLen 1 }}
 	{{- $intport := (first $service.Ports).InternalPort }}
 	{{- template "upstream" (dict "IP" $cont.Address "PORT" $intport) }}
