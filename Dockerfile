@@ -1,7 +1,7 @@
 FROM nginx:1.11.6-alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-RUN apk add --no-cache ca-certificates curl unzip bash
+RUN apk add --no-cache ca-certificates curl unzip bash wget
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
