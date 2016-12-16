@@ -11,9 +11,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
 ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
 RUN chmod u+x /usr/local/bin/forego
 
-ARG TOKEN_RANCHER_GEN
-
-RUN curl --header "PRIVATE-TOKEN: $TOKEN_RANCHER_GEN" "https://gitlab.com/api/v3/projects/2130165/builds/artifacts/master/download?job=compile-go" > /tmp/rancher-gen-rap.zip \
+RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/download?job=compile-go" > /tmp/rancher-gen-rap.zip \
 	&& unzip /tmp/rancher-gen-rap.zip -d /usr/local/bin \
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& rm -f /tmp/rancher-gen-rap.zip
