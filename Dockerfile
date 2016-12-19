@@ -21,7 +21,7 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/down
 COPY /app/ /app/
 WORKDIR /app/
 
-#RUN chmod +x /app/start.sh && chmod +x /app/update_certs && chmod +x /app/letsencrypt_service
+RUN chmod +x /app/begin.sh
 
 
 # Install simp_le program
