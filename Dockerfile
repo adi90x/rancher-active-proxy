@@ -3,7 +3,7 @@ MAINTAINER Adrien M amaurel90@gmail.com
 
 ARG TOKEN_RANCHER_GEN
 
-RUN apk add --no-cache ca-certificates curl unzip bash procps jq tar wget
+RUN apk add --no-cache nano ca-certificates unzip wget certbot
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
@@ -18,22 +18,21 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/down
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& rm -f /tmp/rancher-gen-rap.zip
 	
-COPY . /app/
 COPY /app/ /app/
 WORKDIR /app/
 
-RUN chmod +x /app/start.sh && chmod +x /app/update_certs && chmod +x /app/letsencrypt_service
+#RUN chmod +x /app/start.sh && chmod +x /app/update_certs && chmod +x /app/letsencrypt_service
 
 
 # Install simp_le program
-COPY /install_simp_le.sh /app/install_simp_le.sh
-RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -f /app/install_simp_le.sh
+#COPY /install_simp_le.sh /app/install_simp_le.sh
+#RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -f /app/install_simp_le.sh
 
 VOLUME ["/etc/nginx/certs"]
 
-ENV DEBUG=true              \
-	DOCKER_GEN_VERSION=0.7.3 \
-	DOCKER_HOST=unix:///var/run/docker.sock
+#ENV DEBUG=true              \
+#	DOCKER_GEN_VERSION=0.7.3 \
+#	DOCKER_HOST=unix:///var/run/docker.sock
 
-ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
+#ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
