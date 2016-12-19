@@ -3,7 +3,7 @@ MAINTAINER Adrien M amaurel90@gmail.com
 
 ARG TOKEN_RANCHER_GEN
 
-RUN apk add --no-cache nano ca-certificates unzip wget certbot
+RUN apk add --no-cache nano ca-certificates unzip wget certbot bash
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
