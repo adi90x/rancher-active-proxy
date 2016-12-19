@@ -40,19 +40,23 @@ update_certs() {
 	echo "Beginning !!"
     [[ ! -f /app/letsencrypt.conf ]] && return
 	echo "OK ?"
+
     # Load relevant container settings
     unset LETSENCRYPT_CONTAINERS
     source /app/letsencrypt.conf
 
-    reload_nginx='false'
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
+
 	# Derive host and email variable names
         host_varname="LETSENCRYPT_${cid}_HOST"
+
         # Array variable indirection hack: http://stackoverflow.com/a/25880676/350221
         hosts_array=$host_varname[@]
         email_varname="LETSENCRYPT_${cid}_EMAIL"
         test_certificate_varname="LETSENCRYPT_${cid}_TEST"
+
         create_test_certificate=false
+
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
             create_test_certificate=true
         fi
@@ -61,6 +65,7 @@ update_certs() {
         [[ $DEBUG == true ]] && params_d_str+=" -v"
 
         hosts_array_expanded=("${!hosts_array}")
+	echo "$host_array_expanded"
         # First domain will be our base domain
         base_domain="${hosts_array_expanded[0]}"
 
