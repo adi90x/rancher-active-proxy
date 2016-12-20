@@ -3,6 +3,8 @@ MAINTAINER Adrien M amaurel90@gmail.com
 
 ARG TOKEN_RANCHER_GEN
 
+ENV DEBUG=true 
+
 RUN apk add --no-cache nano ca-certificates unzip wget certbot bash
 
 # Configure Nginx and apply fix for very long server names
