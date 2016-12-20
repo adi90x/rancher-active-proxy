@@ -40,6 +40,10 @@ function check_dh_group {
         setup_certs `basename ${dom}`
     done
 
-
+    #Setting up crontab value 
+    rm /etc/crontabs/root
+    : ${CRON="0 2 * * *"}
+    (crontab -l 2>/dev/null; echo "$CRON /app/letsencrypt.sh") | crontab -
+    
 
 
