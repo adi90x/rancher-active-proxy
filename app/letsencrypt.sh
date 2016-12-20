@@ -1,40 +1,6 @@
 #!/bin/bash
 
-seconds_to_wait=3600
-
-ACME_CA_URI_STAGING="https://acme-staging-v01.api.letsencrypt.org/directory"
-ACME_CA_URI_OFFICIAL="https://acme-staging-v01.api.letsencrypt.org/directory"
-#ACME_CA_URI_OFFICIAL="https://acme-v01.api.letsencrypt.org/directory"
-
 source /app/functions.sh
-
-create_link() {
-    local readonly target=${1?missing target argument}
-    local readonly source=${2?missing source argument}
-    [[ -f "$target" ]] && return 1
-    ln -sf "$source" "$target"
-}
-
-create_links() {
-    local readonly base_domain=${1?missing base_domain argument}
-    local readonly domain=${2?missing base_domain argument}
-
-    if [[ ! -f "/etc/nginx/certs/$base_domain"/fullchain.pem || \
-          ! -f "/etc/nginx/certs/$base_domain"/key.pem ]]; then
-        return 1
-    fi
-    local return_code=1
-    create_link "/etc/nginx/certs/$domain".crt "./$base_domain"/fullchain.pem
-    return_code=$(( $return_code & $? ))
-    create_link "/etc/nginx/certs/$domain".key "./$base_domain"/key.pem
-    return_code=$(( $return_code & $? ))
-    if [[ -f "/etc/nginx/certs/dhparam.pem" ]]; then
-        create_link "/etc/nginx/certs/$domain".dhparam.pem ./dhparam.pem
-        return_code=$(( $return_code & $? ))
-    fi
-    return $return_code
-}
-
 
 update_certs() {
 	echo "Beginning !!"
@@ -56,9 +22,9 @@ update_certs() {
         test_certificate_varname="LETSENCRYPT_${cid}_TEST"
 
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
-            acme_server=$ACME_CA_URI_STAGING
+            acme_server="--staging"
         else
-            acme_server=$ACME_CA_URI_OFFICIAL
+            acme_server="--staging"
         fi
         
         echo "Using Acme server $acme_server"
@@ -72,19 +38,18 @@ update_certs() {
         base_domain="${hosts_array_expanded[0]}"
 
 	#Just in case
-	mkdir -p /etc/nginx/vhost.d
-
+	mkdir -p /etc/nginx/vhost.d && mkdir -p /usr/share/nginx/html
+	
         for domain in "${!hosts_array}"; do
             # Add location configuration for the domain
-            add_location_configuration "$domain" && nginx -t && nginx -s reload
+            add_location_configuration "$domain" && reload_nginx
         	echo "Adding Location Config"
 	 done
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-	    certbot certonly --staging --agree-tos $debug \
-		-m ${!email_varname} -d $base_domain \
-		--server $acme_server \
+	    certbot certonly --agree-tos $debug $acme_server  \
+		-m ${!email_varname} -n -d $base_domain \
 		--webroot -w /usr/share/nginx/html
 	    
 	    echo "Creation cert avec params host : $base_domain et email : ${!email_varname}  "
@@ -92,7 +57,7 @@ update_certs() {
 			
     done
 
-    nginx -t && nginx -s reload
+    reload_nginx
 }
 
 update_certs
