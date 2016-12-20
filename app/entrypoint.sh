@@ -35,9 +35,11 @@ function check_dh_group {
     check_writable_directory '/usr/share/nginx/html'
     check_dh_group
     
-    #Running letsencrypt once to renew existing cert and recreate link
-    #Should be replace by something just copying link ! 
-    rancher-gen --onetime --notify-cmd="/app/letsencrypt.sh" /app/letsencrypt.tmpl /app/letsencrypt.conf
+    #Recreating existing certs link
+    for dom in $(find /etc/letsencrypt/live/* -type d); do
+        setup_certs `basename ${dom}`
+    done
+
 
 
 
