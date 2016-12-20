@@ -3,7 +3,7 @@ MAINTAINER Adrien M amaurel90@gmail.com
 
 ARG TOKEN_RANCHER_GEN
 
-ENV DEBUG=true 
+ENV DEBUG=false 
 
 RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
