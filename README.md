@@ -61,7 +61,6 @@ There is four environmental value that could be set to adi90x/rancher-active-pro
 
 ***
 ***
-***
 
 ### Below is taken from jwilder/nginx-proxy readme.
 
