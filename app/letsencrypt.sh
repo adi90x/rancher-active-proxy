@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 seconds_to_wait=3600
-ACME_CA_URI="${ACME_CA_URI:-https://acme-v01.api.letsencrypt.org/directory}"
-ACME_CA_URI_STAGING="https"
+
+ACME_CA_URI_STAGING="https://acme-staging-v01.api.letsencrypt.org/directory"
+ACME_CA_URI_OFFICIAL="https://acme-staging-v01.api.letsencrypt.org/directory"
+#ACME_CA_URI_OFFICIAL="https://acme-v01.api.letsencrypt.org/directory"
 
 source /app/functions.sh
 
@@ -55,57 +55,33 @@ update_certs() {
         email_varname="LETSENCRYPT_${cid}_EMAIL"
         test_certificate_varname="LETSENCRYPT_${cid}_TEST"
 
-        create_test_certificate=false
-
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
-            create_test_certificate=true
+            acme_server = $ACME_CA_URI_STAGING
+        else
+            acme_server = $ACME_CA_URI_OFFICIAL
         fi
-
+        
+        echo "Using Acme server $acme_server"
+        
         params_d_str=""
         [[ $DEBUG == true ]] && params_d_str+=" -v"
 
         hosts_array_expanded=("${!hosts_array}")
-	echo "$host_array_expanded"
+
         # First domain will be our base domain
         base_domain="${hosts_array_expanded[0]}"
 
-        if [[ "$create_test_certificate" == true ]]; then
-            # Use staging acme end point
-            acme_ca_uri="https://acme-staging.api.letsencrypt.org/directory"
-            if [[ ! -f /etc/nginx/certs/.${base_domain}.test ]]; then
-                # Remove old certificates
-                rm -rf /etc/nginx/certs/${base_domain}
-                for domain in "${!hosts_array}"; do
-                    rm -f /etc/nginx/certs/$domain.{crt,key,dhparam.pem}
-                done
-                touch /etc/nginx/certs/.${base_domain}.test
-            fi
-        else
-            acme_ca_uri="$ACME_CA_URI"
-            if [[ -f /etc/nginx/certs/.${base_domain}.test ]]; then
-                # Remove old test certificates
-                rm -rf /etc/nginx/certs/${base_domain}
-                for domain in "${!hosts_array}"; do
-                    rm -f /etc/nginx/certs/$domain.{crt,key,dhparam.pem}
-                done
-                rm -f /etc/nginx/certs/.${base_domain}.test
-            fi
-        fi
-
-        # Create directory for the first domain
-        mkdir -p /etc/nginx/certs/$base_domain
-        cd /etc/nginx/certs/$base_domain
 
         for domain in "${!hosts_array}"; do
-            # Add all the domains to certificate
-            params_d_str+=" -d $domain"
             # Add location configuration for the domain
-            add_location_configuration "$domain" || reload_nginx
+            add_location_configuration "$domain" && nginx -t && nginx -s reload
         done
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-	echo "## AJOUTER CERTBOT ##"      
+	    echo "## AJOUTER CERTBOT ##"     
+	    
+	    echo "Creation cert avec params host : $host_varname ou $base_domain et email : $email_varname  "
 
     done
 
