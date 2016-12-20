@@ -40,11 +40,10 @@ update_certs() {
 	#Just in case
 	mkdir -p /etc/nginx/vhost.d && mkdir -p /usr/share/nginx/html
 	
-        for domain in "${!hosts_array}"; do
-            # Add location configuration for the domain
-            add_location_configuration "$domain"
-	done
-	#Reload Nginx only once after location added
+        # Add location configuration for the domain
+        add_location_configuration "$domain"
+
+	#Reload Nginx once location added
 	reload_nginx
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
