@@ -27,4 +27,5 @@ RUN mkdir -p /etc/nginx/certs && mkdir -p /etc/nginx/vhost.d && mkdir -p /etc/ng
 
 VOLUME ["/etc/letsencrypt"]
 
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
