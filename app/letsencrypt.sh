@@ -12,7 +12,7 @@ update_certs() {
 
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
 
-	# Derive host and email variable names
+		# Derive host and email variable names
         host_varname="LETSENCRYPT_${cid}_HOST"
 
         # Array variable indirection hack: http://stackoverflow.com/a/25880676/350221
@@ -21,9 +21,9 @@ update_certs() {
         test_certificate_varname="LETSENCRYPT_${cid}_TEST"
 
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
-            acme_server="--staging"
+            acme_server="https://acme-staging.api.letsencrypt.org/directory"
         else
-            acme_server=""
+            acme_server="https://acme-v01.api.letsencrypt.org/directory"
         fi
         
         echo "Using Acme server $acme_server"
@@ -35,25 +35,33 @@ update_certs() {
 
         # First domain will be our base domain
         base_domain="${hosts_array_expanded[0]}"
-
-	#Just in case
-	mkdir -p /etc/nginx/vhost.d && mkdir -p /usr/share/nginx/html
+		
+		#Check if cert switch from staging to real and vice versa
+		if [[ -d "/etc/letsencrypt/renewal/$base_domain.conf" ]]; then
+			actual_server=${grep server /etc/letsencrypt/renewal/$base_domain.conf | cut -f3 -d ' '}
+			if [[ $acme_server == $actual_server]]; then
+				force_renewal=""
+			else
+				force_renewal="--force-renewal"
+			fi
+		fi
 	
-    # Add location configuration for the domain
-    add_location_configuration "$domain"
+		# Add location configuration for the domain
+		add_location_configuration "$domain"
 
-	#Reload Nginx once location added
-	reload_nginx
+		#Reload Nginx once location added
+		reload_nginx
 
-    echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
+		echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-	certbot certonly --agree-tos $debug $acme_server  \
-		-m ${!email_varname} -n -d $base_domain \
-		--webroot -w /usr/share/nginx/html
+		certbot certonly --agree-tos $debug $force_renewal \
+			-m ${!email_varname} -n -d $base_domain \
+			--server $acme_server \
+			--webroot -w /usr/share/nginx/html 
 	    
-	 echo " "
+		echo " "
 
-	setup_certs $base_domain		
+		setup_certs $base_domain		
     done
 	
     reload_nginx
