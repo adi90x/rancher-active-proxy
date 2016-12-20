@@ -56,9 +56,9 @@ update_certs() {
         test_certificate_varname="LETSENCRYPT_${cid}_TEST"
 
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
-            acme_server = $ACME_CA_URI_STAGING
+            acme_server=$ACME_CA_URI_STAGING
         else
-            acme_server = $ACME_CA_URI_OFFICIAL
+            acme_server=$ACME_CA_URI_OFFICIAL
         fi
         
         echo "Using Acme server $acme_server"
@@ -74,15 +74,16 @@ update_certs() {
 
         for domain in "${!hosts_array}"; do
             # Add location configuration for the domain
-            add_location_configuration "$domain" && nginx -t && nginx -s reload
-        done
+           # add_location_configuration "$domain" && nginx -t && nginx -s reload
+        	echo "Adding Location Config"
+	 done
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
 	    echo "## AJOUTER CERTBOT ##"     
 	    
-	    echo "Creation cert avec params host : $host_varname ou $base_domain et email : $email_varname  "
-
+	    echo "Creation cert avec params host : $base_domain et email : ${!email_varname}  "
+	    echo " "	
     done
 
     nginx -t && nginx -s reload
