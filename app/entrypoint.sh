@@ -36,7 +36,7 @@ function check_dh_group {
     check_dh_group
     
     #Recreating existing certs link
-    if [[ ! -d "/etc/letsencrypt/live/" ]]; then
+    if [[ -d "/etc/letsencrypt/live/" ]]; then
     for dom in $(find /etc/letsencrypt/live/* -type d); do
         setup_certs `basename ${dom}`
     done
@@ -44,7 +44,7 @@ function check_dh_group {
     
     #Setting up crontab value 
     rm /etc/crontabs/root
-   # : ${CRON="0 2 * * *"}
+    : ${CRON="0 2 * * *"}
     (crontab -l 2>/dev/null; echo "$CRON /app/letsencrypt.sh") | crontab -
     
 
