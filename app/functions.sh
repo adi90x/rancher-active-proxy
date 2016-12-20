@@ -27,6 +27,15 @@ remove_all_location_configurations() {
     done
     eval "$old_shopt_options" # Restore shopt options
 }
+##Setup new certs
+setup_certs() {
+#Link created cert if link do not exist or broken 
+local dom="${1:-}"
+ln -sf /etc/letsencrypt/live/$dom/privkey.pem /etc/nginx/certs/$dom.key
+ln -sf /etc/letsencrypt/live/$dom/cert.pem /etc/nginx/certs/$dom.crt
+
+}
+
 
 ## Nginx
 reload_nginx() {

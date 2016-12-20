@@ -42,21 +42,22 @@ update_certs() {
 	
         for domain in "${!hosts_array}"; do
             # Add location configuration for the domain
-            add_location_configuration "$domain" && reload_nginx
-        	echo "Adding Location Config"
-	 done
+            add_location_configuration "$domain"
+	done
+	#Reload Nginx only once after location added
+	reload_nginx
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-	    certbot certonly --agree-tos $debug $acme_server  \
+	certbot certonly --agree-tos $debug $acme_server  \
 		-m ${!email_varname} -n -d $base_domain \
 		--webroot -w /usr/share/nginx/html
 	    
-	    echo "Creation cert avec params host : $base_domain et email : ${!email_varname}  "
-	    echo " "
-			
-    done
+	 echo " "
 
+	setup_certs $base_domain		
+    done
+	
     reload_nginx
 }
 
