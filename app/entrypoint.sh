@@ -21,7 +21,7 @@ function check_writable_directory {
 function check_dh_group {
     if [[ ! -f /etc/letsencrypt/dhparam.pem ]]; then
         echo "Creating Diffie-Hellman group (can take several minutes...)"
-        openssl -dsaparam dhparam -out /etc/letsencrypt/.dhparam.pem.tmp 4096
+        openssl dhparam -dsaparam -out /etc/letsencrypt/.dhparam.pem.tmp 4096
         mv /etc/letsencrypt/.dhparam.pem.tmp /etc/letsencrypt/dhparam.pem || exit 1
     fi
 }
