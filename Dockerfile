@@ -25,7 +25,7 @@ WORKDIR /app/
 
 RUN chmod +x /app/letsencrypt.sh
 
-RUN mkdir -p /etc/nginx/certs && mkdir -p /etc/nginx/vhost.d && mkdir -p /etc/nginx/conf.d
+RUN mkdir -p /etc/nginx/certs && mkdir -p /etc/nginx/vhost.d && mkdir -p /etc/nginx/conf.d && mkdir -p /usr/share/nginx/html
 
 VOLUME ["/etc/letsencrypt"]
 
