@@ -1,4 +1,4 @@
-{{- $Default_email := or (env "DEFAULT_EMAIL") "" -}}
+{{- $Default_email := or (env "DEFAULT_EMAIL") "foo@bar.com" -}}
 
 LETSENCRYPT_CONTAINERS=({{- range $host, $services := services | groupByMulti "rap.le_host" ","}}{{range $service := $services}} '{{$service.Name}}'{{end}}{{end}})
 {{ range $host, $services := services | groupByMulti "rap.le_host" "," -}}

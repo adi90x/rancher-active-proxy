@@ -51,7 +51,7 @@ update_certs() {
 
 	certbot certonly --agree-tos $debug $acme_server  \
 		-m ${!email_varname} -n -d $base_domain \
-		--webroot -w /usr/share/nginx/html
+		--webroot -w /usr/share/nginx/html --force-renewal
 	    
 	 echo " "
 
