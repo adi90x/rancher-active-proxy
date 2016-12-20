@@ -5,7 +5,7 @@ ARG TOKEN_RANCHER_GEN
 
 ENV DEBUG=true 
 
-RUN apk add --no-cache nano ca-certificates unzip wget certbot bash
+RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
