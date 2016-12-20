@@ -28,62 +28,41 @@ remove_all_location_configurations() {
     eval "$old_shopt_options" # Restore shopt options
 }
 
-## Docker API
-function docker_api {
-    local scheme
-    local curl_opts=(-s)
-    local method=${2:-GET}
-    # data to POST
-    if [[ -n "${3:-}" ]]; then
-        curl_opts+=(-d "$3")
-    fi
-    if [[ -z "$DOCKER_HOST" ]];then
-        echo "Error DOCKER_HOST variable not set" >&2
-        return 1
-    fi
-    if [[ $DOCKER_HOST == unix://* ]]; then
-        curl_opts+=(--unix-socket ${DOCKER_HOST#unix://})
-        scheme='http:'
-    else
-        scheme="http://${DOCKER_HOST#*://}"
-    fi
-    [[ $method = "POST" ]] && curl_opts+=(-H 'Content-Type: application/json')
-    curl "${curl_opts[@]}" -X${method} ${scheme}$1
-}
-
-function docker_exec {
-    local id="${1?missing id}"
-    local cmd="${2?missing command}"
-    local data=$(printf '{ "AttachStdin": false, "AttachStdout": true, "AttachStderr": true, "Tty":false,"Cmd": %s }' "$cmd")
-    exec_id=$(docker_api "/containers/$id/exec" "POST" "$data" | jq -r .Id)
-    if [[ -n "$exec_id" ]]; then
-        docker_api /exec/$exec_id/start "POST" '{"Detach": false, "Tty":false}'
-    fi
-}
-
-function docker_kill {
-    local id="${1?missing id}"
-    local signal="${2?missing signal}"
-    docker_api "/containers/$id/kill?signal=$signal" "POST"
-}
-
 ## Nginx
 reload_nginx() {
-    if [[ -n "${NGINX_DOCKER_GEN_CONTAINER:-}" ]]; then
-        # Using docker-gen separate container
-        echo "Reloading nginx proxy (using separate container ${NGINX_DOCKER_GEN_CONTAINER})..."
-        docker_kill "$NGINX_DOCKER_GEN_CONTAINER" SIGHUP
-    else
-        if [[ -n "${NGINX_PROXY_CONTAINER:-}" ]]; then
-            echo "Reloading nginx proxy..."
-            docker_exec "$NGINX_PROXY_CONTAINER" \
-                        '[ "sh", "-c", "/usr/local/bin/docker-gen -only-exposed /app/nginx.tmpl /etc/nginx/conf.d/default.conf; /usr/sbin/nginx -s reload" ]'
-        fi
-    fi
-nginx -s reload    
+#Rerun rancher-gen to recreate a new nginx config file 
+rancher-gen --onetime --notify-cmd="nginx -s reload" --check-cmd="nginx -t " /app/nginx.tmpl /etc/nginx/conf.d/default.conf
+  
 }
 
 # Convert argument to lowercase (bash 4 only)
 function lc() {
 	echo "${@,,}"
+}
+
+
+create_link() {
+    local readonly target=${1?missing target argument}
+    local readonly source=${2?missing source argument}
+    [[ -f "$target" ]] && return 1
+    ln -sf "$source" "$target"
+}
+
+create_links() {
+    local readonly base_domain=${1?missing base_domain argument}
+    local readonly domain=${2?missing base_domain argument}
+    if [[ ! -f "/etc/nginx/certs/$base_domain"/fullchain.pem || \
+          ! -f "/etc/nginx/certs/$base_domain"/key.pem ]]; then
+        return 1
+    fi
+    local return_code=1
+    create_link "/etc/nginx/certs/$domain".crt "./$base_domain"/fullchain.pem
+    return_code=$(( $return_code & $? ))
+    create_link "/etc/nginx/certs/$domain".key "./$base_domain"/key.pem
+    return_code=$(( $return_code & $? ))
+    if [[ -f "/etc/nginx/certs/dhparam.pem" ]]; then
+        create_link "/etc/nginx/certs/$domain".dhparam.pem ./dhparam.pem
+        return_code=$(( $return_code & $? ))
+    fi
+    return $return_code
 }
