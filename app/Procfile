@@ -1,2 +1,3 @@
 nginx: nginx
 ranchergen: rancher-gen --config "/app/rancher-gen.conf"
+cron: crond -l 2 -f
