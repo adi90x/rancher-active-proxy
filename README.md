@@ -1,12 +1,16 @@
-[![build status](https://gitlab.com/adi90x/rancher-active-proxy/badges/master/build.svg)](https://gitlab.com/adi90x/rancher-active-proxy/commits/master)![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) 
+[![build status](https://gitlab.com/adi90x/rancher-active-proxy/badges/dev/build.svg)](https://gitlab.com/adi90x/rancher-active-proxy/commits/dev)![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) 
 
-## Rancher Active Proxy
+Branch testing of letsencrypt !
 
-Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) to use with [Rancher](http://rancher.com).
+## Rancher Active Proxy 
+
+Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) for [Rancher](http://rancher.com).
 
 Rancher Active Proxy replace docker-gen by Rancher-gen-rap [adi90x/rancher-gen-rap](https://github.com/adi90x/rancher-gen-rap) ( a fork of the also excellent [janeczku/go-rancher-gen](https://github.com/janeczku/go-rancher-gen) adding some more function )
 
 Rancher Active Proxy use label instead of environmental value.
+
+Rancher Active Proxy is an all-in-one reverse proxy for rancher, supporting Letsencrypt out of the box !
 
 ### Usage
 
@@ -22,7 +26,12 @@ The containers being proxied must [expose](https://docs.docker.com/reference/run
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the rap.host label set.
 
-The only environmental value that could be set to adi90x/rancher-active-proxy is : `DEFAULT_HOST : foo.bar.com`
+There is four environmental value that could be set to adi90x/rancher-active-proxy :
+
+`DEFAULT_HOST : foo.bar.com` => Default Nginx host
+`DEFAULT_EMAIL : foo@bar.com` => Default email to use for letsencrypt
+`CRON : 0 2 * * *  ` => Cron expression to renew cert ( default : 0 2 * * * )
+`DEBUG : True/False` => Default False - Increase Log level 
 
 #### Quick Summary of available labels.
 
@@ -33,14 +42,19 @@ The only environmental value that could be set to adi90x/rancher-active-proxy is
 | `rap.proto`        | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
 | `rap.cert_name`    | Certificat name to use for the virtual host. Default `rap.host`
 | `rap.https_method` | Https method (redirect, noredirect). Default : `redirect`
+| `rap.le_host`      | Certificat to create/renew with Letsencrypt
+| `rap.le_email`     | Email to use for Letsencrypt
+| `rap.le_test  `    | Set to true to use stagging letsencrypt server
+
 
 #### Quick Summary of interesting volume to mount.
 
 |       Path            |            Description         |
 | --------------------- | ------------------------------ |
-| `/etc/nginx/certs`    | Certificate used for https
+| `/etc/letsencrypt`    | Folder with all certificates used for https and Letsencrypt parameters
 | `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
 | `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
+
 
 ***
 ***

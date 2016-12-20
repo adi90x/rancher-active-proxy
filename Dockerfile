@@ -3,7 +3,9 @@ MAINTAINER Adrien M amaurel90@gmail.com
 
 ARG TOKEN_RANCHER_GEN
 
-RUN apk add --no-cache ca-certificates curl unzip bash wget
+ENV DEBUG=false 
+
+RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
 # Configure Nginx and apply fix for very long server names
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
@@ -18,9 +20,14 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/down
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& rm -f /tmp/rancher-gen-rap.zip
 	
-COPY . /app/
+COPY /app/ /app/
 WORKDIR /app/
 
-VOLUME ["/etc/nginx/certs"]
+RUN chmod +x /app/letsencrypt.sh
 
+RUN mkdir -p /etc/nginx/certs && mkdir -p /etc/nginx/vhost.d && mkdir -p /etc/nginx/conf.d
+
+VOLUME ["/etc/letsencrypt"]
+
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
