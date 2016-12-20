@@ -29,8 +29,11 @@ Provided your DNS is setup to forward foo.bar.com to the a host running nginx-pr
 There is four environmental value that could be set to adi90x/rancher-active-proxy :
 
 `DEFAULT_HOST : foo.bar.com` => Default Nginx host
+
 `DEFAULT_EMAIL : foo@bar.com` => Default email to use for letsencrypt
+
 `CRON : 0 2 * * *  ` => Cron expression to renew cert ( default : 0 2 * * * )
+
 `DEBUG : True/False` => Default False - Increase Log level 
 
 #### Quick Summary of available labels.
