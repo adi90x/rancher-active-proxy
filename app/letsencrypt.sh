@@ -63,8 +63,8 @@ update_certs() {
         
         echo "Using Acme server $acme_server"
         
-        params_d_str=""
-        [[ $DEBUG == true ]] && params_d_str+=" -v"
+        debug=""
+        [[ $DEBUG == true ]] && debug+=" -v"
 
         hosts_array_expanded=("${!hosts_array}")
 
@@ -82,7 +82,10 @@ update_certs() {
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-	    echo "## AJOUTER CERTBOT ##"     
+	    certbot certonly --staging --agree-tos $debug \
+		-m ${!email_varname} -d $base_domain \
+		--server $acme_server \
+		--webroot -w /usr/share/nginx/html
 	    
 	    echo "Creation cert avec params host : $base_domain et email : ${!email_varname}  "
 	    echo " "
