@@ -5,6 +5,6 @@ build-image:
  script:
     - docker version
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-	- if [ $CI_BUILD_REF_NAME == "master" ]; then tag="latest"; else tag=$CI_BUILD_REF_NAME; fi
+    - if [ $CI_BUILD_REF_NAME == "master" ]; then tag="latest"; else tag=$CI_BUILD_REF_NAME; fi
     - docker build --build-arg TOKEN_RANCHER_GEN=$TOKEN_RANCHER_GEN -t registry.gitlab.com/adi90x/rancher-active-proxy:$tag .
     - docker push registry.gitlab.com/adi90x/rancher-active-proxy
