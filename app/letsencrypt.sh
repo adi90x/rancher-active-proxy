@@ -71,10 +71,12 @@ update_certs() {
         # First domain will be our base domain
         base_domain="${hosts_array_expanded[0]}"
 
+	#Just in case
+	mkdir -p /etc/nginx/vhost.d
 
         for domain in "${!hosts_array}"; do
             # Add location configuration for the domain
-           # add_location_configuration "$domain" && nginx -t && nginx -s reload
+            add_location_configuration "$domain" && nginx -t && nginx -s reload
         	echo "Adding Location Config"
 	 done
 
@@ -83,7 +85,8 @@ update_certs() {
 	    echo "## AJOUTER CERTBOT ##"     
 	    
 	    echo "Creation cert avec params host : $base_domain et email : ${!email_varname}  "
-	    echo " "	
+	    echo " "
+			
     done
 
     nginx -t && nginx -s reload
