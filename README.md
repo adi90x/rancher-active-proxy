@@ -24,10 +24,12 @@ The containers being proxied must [expose](https://docs.docker.com/reference/run
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the rap.host label set.
 
-There is two environmental value that could be set to adi90x/rancher-active-proxy is :
+There is four environmental value that could be set to adi90x/rancher-active-proxy :
 
 `DEFAULT_HOST : foo.bar.com` => Default Nginx host
 `DEFAULT_EMAIL : foo@bar.com` => Default email to use for letsencrypt
+`CRON : 0 2 * * *  ` => Cron expression to renew cert ( default : 0 2 * * * )
+`DEBUG : True/False` => Default False - Increase Log level 
 
 #### Quick Summary of available labels.
 
@@ -47,9 +49,10 @@ There is two environmental value that could be set to adi90x/rancher-active-prox
 
 |       Path            |            Description         |
 | --------------------- | ------------------------------ |
-| `/etc/nginx/certs`    | Certificate used for https
+| `/etc/letsencrypt`    | Folder with all certificates used for https and Letsencrypt parameters
 | `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
 | `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
+
 
 ***
 ***
