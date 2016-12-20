@@ -3,9 +3,8 @@
 source /app/functions.sh
 
 update_certs() {
-	echo "Beginning !!"
+
     [[ ! -f /app/letsencrypt.conf ]] && return
-	echo "OK ?"
 
     # Load relevant container settings
     unset LETSENCRYPT_CONTAINERS
@@ -24,7 +23,7 @@ update_certs() {
         if [[ $(lc "${!test_certificate_varname:-}") == true ]]; then
             acme_server="--staging"
         else
-            acme_server="--staging"
+            acme_server=""
         fi
         
         echo "Using Acme server $acme_server"
@@ -40,17 +39,17 @@ update_certs() {
 	#Just in case
 	mkdir -p /etc/nginx/vhost.d && mkdir -p /usr/share/nginx/html
 	
-        # Add location configuration for the domain
-        add_location_configuration "$domain"
+    # Add location configuration for the domain
+    add_location_configuration "$domain"
 
 	#Reload Nginx once location added
 	reload_nginx
 
-        echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
+    echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
 	certbot certonly --agree-tos $debug $acme_server  \
 		-m ${!email_varname} -n -d $base_domain \
-		--webroot -w /usr/share/nginx/html --force-renewal
+		--webroot -w /usr/share/nginx/html
 	    
 	 echo " "
 
