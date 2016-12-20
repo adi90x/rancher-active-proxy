@@ -29,11 +29,13 @@ remove_all_location_configurations() {
 }
 ##Setup new certs
 setup_certs() {
-#Link created cert if link do not exist or broken 
-echo "Should add a check to verify if priv/cert exist !"
+#Create cert link  and add dhparam key
 local dom="${1:-}"
-ln -sf /etc/letsencrypt/live/$dom/privkey.pem /etc/nginx/certs/$dom.key
-ln -sf /etc/letsencrypt/live/$dom/cert.pem /etc/nginx/certs/$dom.crt
+if [  -e /etc/letsencrypt/live/$dom/privkey.pem ] && [ -e /etc/letsencrypt/live/$dom/cert.pem ]; then
+    ln -sf /etc/letsencrypt/live/$dom/privkey.pem /etc/nginx/certs/$dom.key
+    ln -sf /etc/letsencrypt/live/$dom/cert.pem /etc/nginx/certs/$dom.crt
+    ln -sf /etc/letsencrypt/dhparam.pem /etc/nginx/certs/$dom.dhparam.pem
+fi
 
 }
 
