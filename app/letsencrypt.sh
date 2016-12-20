@@ -38,8 +38,8 @@ update_certs() {
 		
 		#Check if cert switch from staging to real and vice versa
 		if [[ -d "/etc/letsencrypt/renewal/$base_domain.conf" ]]; then
-			actual_server=${grep server /etc/letsencrypt/renewal/$base_domain.conf | cut -f3 -d ' '}
-			if [[ $acme_server == $actual_server]]; then
+			actual_server=$(grep server /etc/letsencrypt/renewal/$base_domain.conf | cut -f3 -d ' ')
+			if [[ $acme_server == $actual_server ]]; then
 				force_renewal=""
 			else
 				force_renewal="--force-renewal"
