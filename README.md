@@ -4,11 +4,13 @@ Branch testing of letsencrypt !
 
 ## Rancher Active Proxy 
 
-Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) to use with [Rancher](http://rancher.com).
+Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) for [Rancher](http://rancher.com).
 
 Rancher Active Proxy replace docker-gen by Rancher-gen-rap [adi90x/rancher-gen-rap](https://github.com/adi90x/rancher-gen-rap) ( a fork of the also excellent [janeczku/go-rancher-gen](https://github.com/janeczku/go-rancher-gen) adding some more function )
 
 Rancher Active Proxy use label instead of environmental value.
+
+Rancher Active Proxy is an all-in-one reverse proxy for rancher, supporting Letsencrypt out of the box !
 
 ### Usage
 
