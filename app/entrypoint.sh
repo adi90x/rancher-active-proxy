@@ -46,4 +46,5 @@ function check_dh_group {
     rm /etc/crontabs/root
     : ${CRON="0 2 * * *"}
     (crontab -l 2>/dev/null; echo "$CRON /app/letsencrypt.sh") | crontab -
-
+	
+	exec "$@"
