@@ -21,18 +21,10 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/down
 COPY /app/ /app/
 WORKDIR /app/
 
-RUN chmod +x /app/begin.sh && chmod +x /app/letsencrypt.sh
+RUN chmod +x /app/letsencrypt.sh
 
+RUN mkdir -p /etc/nginx/certs && mkdir -p /etc/nginx/vhost.d && mkdir -p /etc/nginx/conf.d
 
-# Install simp_le program
-#COPY /install_simp_le.sh /app/install_simp_le.sh
-#RUN chmod +rx /app/install_simp_le.sh && sync && /app/install_simp_le.sh && rm -f /app/install_simp_le.sh
+VOLUME ["/etc/letsencrypt"]
 
-VOLUME ["/etc/nginx/certs"]
-
-#ENV DEBUG=true              \
-#	DOCKER_GEN_VERSION=0.7.3 \
-#	DOCKER_HOST=unix:///var/run/docker.sock
-
-#ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
