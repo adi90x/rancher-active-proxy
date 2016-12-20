@@ -5,5 +5,5 @@ build-image:
  script:
     - docker version
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker build --build-arg TOKEN_RANCHER_GEN=$TOKEN_RANCHER_GEN -t registry.gitlab.com/adi90x/rancher-active-proxy .
+    - docker build --build-arg TOKEN_RANCHER_GEN=$TOKEN_RANCHER_GEN -t registry.gitlab.com/adi90x/rancher-active-proxy:latest .
     - docker push registry.gitlab.com/adi90x/rancher-active-proxy
