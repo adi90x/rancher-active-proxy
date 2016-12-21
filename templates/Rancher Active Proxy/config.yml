@@ -1,0 +1,7 @@
+name: Rancher Active Proxy
+description: "Automatic Active Proxy for Rancher with Let's Encrypt support"
+version: "v0.0.1"
+category: Proxy
+maintainer: AdrienM
+license: MIT
+projectURl: "https://github.com/adi90x/rancher-active-proxy"

@@ -1,0 +1,15 @@
+.catalog:
+ name: "Initial Version"
+ version: "v0.0.1"
+ questions:    
+    - variable: PATH
+      label: "Path to save config on host"
+      default: "/data/rancher-active-proxy"
+      type: string
+    - variable: DEFAULT_HOST
+      label: "Default Virtual Host to use"
+      type: string
+    - variable: EMAIL
+      label: "Default Email to use for Letsencrypt"
+      default: "foo@bar.com"
+      type: string
