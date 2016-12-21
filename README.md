@@ -1,6 +1,4 @@
-[![build status](https://gitlab.com/adi90x/rancher-active-proxy/badges/master/build.svg)](https://gitlab.com/adi90x/rancher-active-proxy/commits/master)![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) 
-
-Branch testing of letsencrypt !
+[![build status](https://gitlab.com/adi90x/rancher-active-proxy/badges/master/build.svg)](https://gitlab.com/adi90x/rancher-active-proxy/commits/master)  ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg) 
 
 ## Rancher Active Proxy 
 
