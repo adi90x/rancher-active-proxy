@@ -13,3 +13,11 @@
       label: "Default Email to use for Letsencrypt"
       default: "foo@bar.com"
       type: string
+    - variable: CRON
+      label: "Auto renew cron like setup"
+      default: "0 2 * * *"
+      type: string
+    - variable: DEBUG
+      label: "Set to true to enable debug"
+      default: "False"
+      type: string

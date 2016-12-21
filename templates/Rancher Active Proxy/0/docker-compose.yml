@@ -5,6 +5,8 @@ services:
     environment:
       DEFAULT_HOST: $(DEFAULT_HOST)
       DEFAULT_EMAIL: $(DEFAULT_EMAIL)
+      CRON: $(CRON)
+      DEBUG: $(DEBUG)
     stdin_open: true
     volumes:
     - $(PATH)/htpasswd:/etc/nginx/htpasswd
@@ -15,4 +17,4 @@ services:
     - 80:80/tcp
     - 443:443/tcp
     labels:
-      io.rancher.container.pull_image: always	  
+      io.rancher.container.pull_image: always
