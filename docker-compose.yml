@@ -1,15 +1,18 @@
 version: '2'
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-
-  whoami:
-    image: jwilder/whoami
+  Proxy:
+    image: adi90x/rancher-active-proxy
     environment:
-      - VIRTUAL_HOST=whoami.local
-
+      DEFAULT_HOST: "Default Domain ex: bar.com"
+      DEFAULT_EMAIL: "Default Email ex: foo@bar.com"
+    stdin_open: true
+    volumes:
+    - /local/path/data/nginx/htpasswd:/etc/nginx/htpasswd
+    - /local/path/data/nginx/vhost.d:/etc/nginx/vhost.d
+    - /local/path/data/nginx/letsencrypt:/etc/letsencrypt
+    tty: true
+    ports:
+    - 80:80/tcp
+    - 443:443/tcp
+    labels:
+      io.rancher.container.pull_image: always
