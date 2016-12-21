@@ -54,7 +54,7 @@ update_certs() {
 
 		echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
-		certbot certonly --agree-tos $debug $force_renewal \
+		certbot certonly -t --agree-tos $debug $force_renewal \
 			-m ${!email_varname} -n -d $base_domain \
 			--server $acme_server \
 			--webroot -w /usr/share/nginx/html 
