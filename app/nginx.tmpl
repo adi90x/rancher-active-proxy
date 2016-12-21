@@ -109,7 +109,8 @@ upstream {{ $host }} {
 
 {{- if $is_https }}
 
-{{- if eq $https_method "redirect" }} server {
+{{- if eq $https_method "redirect" }} 
+server {
 	server_name {{ $host }};
 	listen 80 {{ $default_server }};
 	access_log /var/log/nginx/access.log vhost;
