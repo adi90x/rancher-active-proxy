@@ -10,6 +10,12 @@ Rancher Active Proxy use label instead of environmental value.
 
 Rancher Active Proxy is an all-in-one reverse proxy for rancher, supporting Letsencrypt out of the box !
 
+### Easy Setup with catalog
+
+Just add : `https://github.com/adi90x/rancher-active-proxy.git` to your custom catalog list. ( Rancher > Admin > Settings )
+
+Then go to catalog and install Rancher Active Proxy !
+
 ### Usage
 
 Minimal Params To run it:
