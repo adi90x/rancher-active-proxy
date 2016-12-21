@@ -42,6 +42,8 @@ fi
 
 ## Nginx
 reload_nginx() {
+#Delete file to avoid looping problem
+rm -f /etc/nginx/conf.d/default.conf
 #Rerun rancher-gen to recreate a new nginx config file 
 rancher-gen --onetime --notify-cmd="nginx -s reload" --check-cmd="nginx -t " /app/nginx.tmpl /etc/nginx/conf.d/default.conf
   
