@@ -30,17 +30,7 @@ The containers being proxied must [expose](https://docs.docker.com/reference/run
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the rap.host label set.
 
-There is four environmental value that could be set to adi90x/rancher-active-proxy :
-
-`DEFAULT_HOST : foo.bar.com` => Default Nginx host
-
-`DEFAULT_EMAIL : foo@bar.com` => Default email to use for letsencrypt
-
-`CRON : 0 2 * * *  ` => Cron expression to renew cert ( default : 0 2 * * * )
-
-`DEBUG : True/False` => Default False - Increase Log level 
-
-#### Quick Summary of available labels.
+#### Summary of available labels for proxied containers.
 
 |       Label        |            Description         |
 | ------------------ | ------------------------------ |
@@ -53,6 +43,15 @@ There is four environmental value that could be set to adi90x/rancher-active-pro
 | `rap.le_email`     | Email to use for Letsencrypt
 | `rap.le_test  `    | Set to true to use stagging letsencrypt server
 
+#### Summary of environment variable available for Rancher Active Proxy.
+
+|       Label        |            Description         |
+| ------------------ | ------------------------------ |
+| `DEBUG`            | Set to `true` to enable more output. Default : False. 
+| `CRON`             | Cron like expression to define when certs are renew. Default : `0 2 * * *` 
+| `DEFAULT_HOST`     | Default Nginx host.
+| `DEFAULT_EMAIL`    | Default Email for Letsencrypt.
+| `RAP_DEBUG` 		 | Define Rancher-Gen-Rap verbosity (Valid values: "debug", "info", "warn", and "error"). Default: `info`
 
 #### Quick Summary of interesting volume to mount.
 

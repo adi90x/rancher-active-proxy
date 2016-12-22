@@ -1,9 +1,8 @@
 FROM nginx:1.11.6-alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-ARG TOKEN_RANCHER_GEN
-
-ENV DEBUG=false 
+ENV DEBUG=false
+ENV RAP_DEBUG="info"
 
 RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
