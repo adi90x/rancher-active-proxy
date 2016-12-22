@@ -2,7 +2,7 @@
 
 ## Rancher Active Proxy 
 
-Rancher Active Proxy is an all-in-one reverse proxy for Rancher, supporting Letsencrypt out of the box !
+Rancher Active Proxy is an all-in-one reverse proxy for [Rancher](http://rancher.com), supporting Letsencrypt out of the box !
 
 Rancher Active Proxy is based on the excellent idea of [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
