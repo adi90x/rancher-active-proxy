@@ -2,13 +2,13 @@
 
 ## Rancher Active Proxy 
 
-Rancher Active Proxy is a fork of the excellent [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) for [Rancher](http://rancher.com).
+Rancher Active Proxy is an all-in-one reverse proxy for Rancher, supporting Letsencrypt out of the box !
+
+Rancher Active Proxy is based on the excellent idea of [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
 Rancher Active Proxy replace docker-gen by Rancher-gen-rap [adi90x/rancher-gen-rap](https://github.com/adi90x/rancher-gen-rap) ( a fork of the also excellent [janeczku/go-rancher-gen](https://github.com/janeczku/go-rancher-gen) adding some more function )
 
 Rancher Active Proxy use label instead of environmental value.
-
-Rancher Active Proxy is an all-in-one reverse proxy for rancher, supporting Letsencrypt out of the box !
 
 ### Easy Setup with catalog
 
@@ -30,7 +30,7 @@ The containers being proxied must [expose](https://docs.docker.com/reference/run
 
 Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the rap.host label set.
 
-There is four environmental value that could be set to adi90x/rancher-active-proxy :
+There are four environmental value that could be set to adi90x/rancher-active-proxy :
 
 `DEFAULT_HOST : foo.bar.com` => Default Nginx host
 
