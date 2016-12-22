@@ -15,7 +15,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
 ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
 RUN chmod u+x /usr/local/bin/forego
 
-RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/master/download?job=compile-go" -O /tmp/rancher-gen-rap.zip \
+RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/latest/download?job=compile-go" -O /tmp/rancher-gen-rap.zip \
 	&& unzip /tmp/rancher-gen-rap.zip -d /usr/local/bin \
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& rm -f /tmp/rancher-gen-rap.zip
