@@ -1,0 +1,11 @@
+
+{{range $h, $c := host.Containers | groupByMulti "rap.host" ","}}
+{{range $cc := $c }}
+{{ if eq $cc.Service "" }}
+{{$cervice := $cc.Name}}
+
+{{$h }}
+{{ $c}}
+{{end}}
+{{end}}
+{{end}}
