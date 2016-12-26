@@ -6,10 +6,6 @@ ARG VERSION_RANCHER_GEN="master"
 
 RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
-
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
-    && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
-
 # Install Forego & Rancher-Gen-RAP
 ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
 
