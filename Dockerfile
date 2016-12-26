@@ -1,9 +1,9 @@
 FROM nginx:1.11.6-alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-ENV DEBUG=false RAP_DEBUG="info" VERSION_RANCHER_GEN="master"
+ENV DEBUG=false RAP_DEBUG="info" 
 #ENV RAP_DEBUG="info"
-#ARG VERSION_RANCHER_GEN="master"
+ARG VERSION_RANCHER_GEN="master"
 
 RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
 
