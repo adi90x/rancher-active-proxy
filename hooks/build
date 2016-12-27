@@ -1,3 +1,9 @@
 #!/bin/bash
 
-docker build --build-arg VERSION_RANCHER_GEN="7840121/artifacts" -t $IMAGE_NAME .
+FORCE_RANCHER_GEN_VERSION="7840121"
+
+version_available=$(curl --write-out %{http_code} --silent --output /dev/null https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/$SOURCE_BRANCH/browse?job=compile-go)
+if [ $version_available == "302" ]; then build_version=artifacts/$SOURCE_BRANCH; else build_version="artifacts/master"; fi
+if [ $FORCE_RANCHER_GEN_VERSION != "" ]; then build_version=$FORCE_RANCHER_GEN_VERSION/artifacts; fi
+
+docker build --build-arg VERSION_RANCHER_GEN=$build_version -t $IMAGE_NAME .
