@@ -7,3 +7,5 @@ if [ $version_available == "302" ]; then build_version=artifacts/$SOURCE_BRANCH;
 if [ $FORCE_RANCHER_GEN_VERSION != "" ]; then build_version=$FORCE_RANCHER_GEN_VERSION/artifacts; fi
 
 export build_version=$build_version
+
+echo $build_version
