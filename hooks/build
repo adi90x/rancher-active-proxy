@@ -1,0 +1,2 @@
+#! /usr/bin/sh
+docker build --build-arg VERSION_RANCHER_GEN=7840121/artifacts -t $IMAGE_NAME . 
