@@ -1,3 +1,5 @@
 #!/bin/bash
 
+echo $build_version
+
 docker build --build-arg VERSION_RANCHER_GEN=$build_version -t $IMAGE_NAME .
