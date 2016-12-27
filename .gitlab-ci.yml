@@ -5,7 +5,8 @@ build-image:
  script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - version_available=$(curl --write-out %{http_code} --silent --output /dev/null https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/$CI_BUILD_REF_NAME/browse?job=compile-go)
-    - if [ $version_available == "302" ]; then build_version=$CI_BUILD_REF_NAME; else build_version="master"; fi
+    - if [ $version_available == "302" ]; then build_version=artifacts/$CI_BUILD_REF_NAME; else build_version="artifacts/master"; fi
+    - if [ $FORCE_RANCHER_GEN_VERSION != "" ]; then build_version=$FORCE_RANCHER_GEN_VERSION/artifacts; fi
     - if [ $CI_BUILD_REF_NAME == "master" ]; then tag="latest"; else tag=$CI_BUILD_REF_NAME; fi
     - docker build --build-arg VERSION_RANCHER_GEN=$build_version -t registry.gitlab.com/adi90x/rancher-active-proxy:$tag .
     - docker push registry.gitlab.com/adi90x/rancher-active-proxy
