@@ -8,5 +8,5 @@ build-image:
     - if [ $version_available == "302" ]; then build_version=$CI_BUILD_REF_NAME; else build_version="master"; fi
     - if [ $FORCE_RANCHER_GEN_VERSION <> "" ]; then $build_version=$FORCE_RANCHER_GEN_VERSION; fi
     - if [ $CI_BUILD_REF_NAME == "master" ]; then tag="latest"; else tag=$CI_BUILD_REF_NAME; fi
-    - docker build --build-arg VERSION_RANCHER_GEN=$build_version FORCE_RANCHER_GEN=$force -t registry.gitlab.com/adi90x/rancher-active-proxy:$tag .
+    - docker build --build-arg VERSION_RANCHER_GEN=$build_version -t registry.gitlab.com/adi90x/rancher-active-proxy:$tag .
     - docker push registry.gitlab.com/adi90x/rancher-active-proxy
