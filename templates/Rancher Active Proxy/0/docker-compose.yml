@@ -3,15 +3,15 @@ services:
   Rancher-Active-Proxy:
     image: adi90x/rancher-active-proxy
     environment:
-      DEFAULT_HOST: $(DEFAULT_HOST)
-      DEFAULT_EMAIL: $(DEFAULT_EMAIL)
-      CRON: $(CRON)
-      DEBUG: $(DEBUG)
+      DEFAULT_HOST: ${DEFAULT_HOST}
+      DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+      CRON: ${CRON}
+      DEBUG: ${DEBUG}
     stdin_open: true
     volumes:
-    - $(PATH)/htpasswd:/etc/nginx/htpasswd
-    - $(PATH)/vhost.d:/etc/nginx/vhost.d
-    - $(PATH)/letsencrypt:/etc/letsencrypt
+    - ${PATH}/htpasswd:/etc/nginx/htpasswd
+    - ${PATH}/vhost.d:/etc/nginx/vhost.d
+    - ${PATH}/letsencrypt:/etc/letsencrypt
     tty: true
     ports:
     - 80:80/tcp
