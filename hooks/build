@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FORCE_RANCHER_GEN_VERSION="7913952"
+FORCE_RANCHER_GEN_VERSION=""
 
 version_available=$(curl --write-out %{http_code} --silent --output /dev/null https://gitlab.com/adi90x/rancher-gen-rap/builds/artifacts/$SOURCE_BRANCH/browse?job=compile-go)
 if [ $version_available == "302" ]; then build_version=artifacts/$SOURCE_BRANCH; else build_version="artifacts/master"; fi
