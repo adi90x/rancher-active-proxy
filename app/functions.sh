@@ -31,9 +31,9 @@ remove_all_location_configurations() {
 setup_certs() {
 #Create cert link  and add dhparam key
 local dom="${1:-}"
-if [  -e /etc/letsencrypt/live/$dom/privkey.pem ] && [ -e /etc/letsencrypt/live/$dom/cert.pem ]; then
+if [  -e /etc/letsencrypt/live/$dom/privkey.pem ] && [ -e /etc/letsencrypt/live/$dom/fullchain.pem ]; then
     ln -sf /etc/letsencrypt/live/$dom/privkey.pem /etc/nginx/certs/$dom.key
-    ln -sf /etc/letsencrypt/live/$dom/cert.pem /etc/nginx/certs/$dom.crt
+    ln -sf /etc/letsencrypt/live/$dom/fullchain.pem /etc/nginx/certs/$dom.crt
     ln -sf /etc/letsencrypt/dhparam.pem /etc/nginx/certs/$dom.dhparam.pem
 fi
 
