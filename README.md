@@ -76,7 +76,17 @@ This feature even enable you to proxy rancher-server, just start it with somethi
 
 In this case `admin.foo.com` will enable you to acces rancher administration, but it is better to keep port 8080 expose and use `http://foo.com:8080` as the host registration URL.
 
-***
+#### Let's Encrypt support out of box
+
+Rancher Active Proxy is using `certbot` from Let's Encrypt in order to automatically get SSL certificates for containers.
+
+In order to enable that feature you need to add `rap.le_host` label to the container ( you probably want it to be equal to `rap.host`)
+
+And you should either start Rancher Active Proxy with environment variable `DEFAULT_EMAIL` or specify `rap.le_email` as a container label.
+
+If you are developping I recommend to add `rap.le_test=true` to the container in order to use Let's Encrypt stagging environment and to not exceed limits.
+
+
 ***
 
 The below part is mostly taken from jwilder/nginx-proxy [README](https://github.com/jwilder/nginx-proxy/blob/master/README.md) and modify to reflect Rancher Active Proxy
