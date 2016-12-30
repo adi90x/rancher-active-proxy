@@ -63,11 +63,17 @@ Provided your DNS is setup to forward foo.bar.com to the a host running nginx-pr
 | `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
 | `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
 
-#### Special Attention 
+#### Special Attention for standalone containers
 
 Rancher Active Proxy is also able to work for standalone containers on the host it is launch.
+
 There is only one limit to this : You should not use the same host name ( `rap.host` label ) for a standalone container and for a service.
 
+This feature even enable you to proxy rancher-server, just start it with something like that :
+
+`docker run -d --restart=unless-stopped -p 8080:8080 --name=rancher-server -l rap.host=admin.foo.com -l rap.port=8080 -l rap.le_host=admin.foo.com -l  rap.le_email=foo@bar.com -l io.rancher.container.pull_image=always rancher/server`
+
+In this case `admin.foo.com` will enable you to acces rancher administration, but it is better to keep port 8080 expose and use `http://foo.com:8080` as the host registration URL.
 
 ***
 ***
