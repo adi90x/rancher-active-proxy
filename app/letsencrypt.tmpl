@@ -10,6 +10,7 @@ LETSENCRYPT_CONTAINERS=(
 {{- end -}}
 
 )
+
 {{ range $host, $services := services | groupByMulti "rap.le_host" "," -}}
 
 {{- range $service := $services }}
@@ -21,8 +22,10 @@ LETSENCRYPT_{{$service.Name}}_TEST="{{.Labels.GetValue "rap.le_test"}}"
 {{- end -}}
 {{- end -}}
 
-{{- range $host, $conts := host.Containers | groupByMultiFilter "" "rap.le_host" "," -}}
+{{ range $host, $conts := host.Containers | groupByMultiFilter "" "rap.le_host" "," }}
+
 LETSENCRYPT_{{$host}}_HOST=( '{{$host}}' )
 LETSENCRYPT_{{$host}}_EMAIL="{{(first $conts).Labels.GetValue "rap.le_email" $Default_email}}"
 LETSENCRYPT_{{$host}}_TEST="{{(first $conts).Labels.GetValue "rap.le_test"}}"
+
 {{- end -}}
