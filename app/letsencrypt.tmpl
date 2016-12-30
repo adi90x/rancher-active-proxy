@@ -23,7 +23,7 @@ LETSENCRYPT_{{$service.Name}}_TEST="{{.Labels.GetValue "rap.le_test"}}"
 {{- end -}}
 
 {{ range $host, $conts := host.Containers | groupByMultiFilter "" "rap.le_host" "," }}
-{{ $first_cont := first $conts -}}
+{{- $first_cont := first $conts }}
 
 LETSENCRYPT_{{$first_cont.Name}}_HOST=( '{{$host}}' )
 LETSENCRYPT_{{$first_cont.Name}}_EMAIL="{{ $first_cont.Labels.GetValue "rap.le_email" $Default_email}}"
