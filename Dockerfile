@@ -1,4 +1,4 @@
-FROM nginx:1.11.6-alpine
+FROM nginx:alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
 ENV DEBUG=false RAP_DEBUG="info" 
