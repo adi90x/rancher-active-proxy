@@ -9,7 +9,7 @@
     - variable: DEFAULT_HOST
       label: "Default Virtual Host to use"
       type: string
-    - variable: EMAIL
+    - variable: DEFAULT_EMAIL
       label: "Default Email to use for Letsencrypt"
       default: "foo@bar.com"
       type: string    
