@@ -12,6 +12,10 @@
     - variable: EMAIL
       label: "Default Email to use for Letsencrypt"
       default: "foo@bar.com"
+      type: string    
+    - variable: DEFAULT_PORT
+      label: "Default Port to use"
+      default: "80"
       type: string
     - variable: CRON
       label: "Auto renew cron like setup"
