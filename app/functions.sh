@@ -44,9 +44,10 @@ fi
 reload_nginx() {
 #Delete file to avoid looping problem
 rm -f /etc/nginx/conf.d/default.conf
+rm -f /etc/nginx/conf.d/default_standalone.conf
 #Rerun rancher-gen to recreate a new nginx config file 
 rancher-gen --onetime --notify-cmd="nginx -s reload" --check-cmd="nginx -t " /app/nginx.tmpl /etc/nginx/conf.d/default.conf
-  
+rancher-gen --onetime --notify-cmd="nginx -s reload" --check-cmd="nginx -t " /app/nginx_standalone.tmpl /etc/nginx/conf.d/default_standalone.conf
 }
 
 # Convert argument to lowercase (bash 4 only)
