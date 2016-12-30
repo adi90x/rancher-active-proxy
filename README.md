@@ -275,9 +275,10 @@ If you are using multiple hostnames for a single container (e.g. `rap.host=examp
 If you want most of your virtual hosts to use a default single `location` block configuration and then override on a few specific ones, add those settings to the `/etc/nginx/vhost.d/default_location` file. This file
 will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}` file associated with it.
 
-### Contributing
+## Contributing
 
 Do not hesitate to send issues or pull requests ! 
+
 Automated Gitlab CI is used to build Rancher Active Proxy therefore send any pull request/issues to [Rancher Active Proxy on Gitlab.com](https://gitlab.com/adi90x/rancher-active-proxy/)
 
 
