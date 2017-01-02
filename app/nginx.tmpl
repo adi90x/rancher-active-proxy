@@ -90,7 +90,7 @@ upstream {{ $host }} {
 		     {{- template "upstream" (dict "IP" $cont.Address "PORT" $default_port) }}
 	    {{- end }}
 {{- end -}}
-{{end}}
+{{end}} 	server localhost down;
 }
 {{ $first_service := first $services }}
 
