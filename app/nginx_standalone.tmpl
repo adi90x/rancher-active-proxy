@@ -19,7 +19,7 @@ upstream {{ $host }} {
 	    {{- else }}
 		     {{- template "upstream" (dict "IP" $cont.Address "PORT" $default_port) }}
 	    {{- end }}
-{{end}}	    
+{{end}} 	server localhost down;
 }
 
 {{ $first_cont := first $conts -}}
