@@ -41,6 +41,8 @@ function check_dh_group {
         setup_certs `basename ${dom}`
     done
     fi
+    #Deleting default.conf if it is there
+    rm -f /etc/nginx/conf.d/default.conf
     
     #Setting up crontab value 
     rm /etc/crontabs/root
