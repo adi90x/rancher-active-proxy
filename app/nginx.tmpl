@@ -4,7 +4,7 @@
 {{ end }}
 
 {{ define "server" }}
-{{- $host = .HOST -}}
+{{- $host := .HOST -}}
 {{- $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
@@ -127,9 +127,9 @@ server {
 	ssl_certificate_key /etc/nginx/certs/default.key;
 }
 {{- end -}}
-{{- end }}
+{{- end -}}
 
-{{- end }}
+{{- end -}}
 
 # If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
 # scheme used to connect to this server
@@ -223,9 +223,9 @@ upstream {{ $host }} {
 {{end}} 	server localhost down;
 }
 
-{{- template "server" (dict "HOST" $host "FIRST" first $services) }}
+{{- template "server" (dict "HOST" $host "FIRST" (first $services)) }}
 
-{{ end -}}
+{{- end -}}
 
 
 # Standalone containers config
@@ -249,7 +249,7 @@ upstream {{ $host }} {
 }
 
 
-{{- template "server" (dict "HOST" $host "FIRST" first $conts) }}
+{{- template "server" (dict "HOST" $host "FIRST" (first $conts)) }}
 
-{{- end }}
+{{- end -}}
 
