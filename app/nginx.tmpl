@@ -48,8 +48,8 @@ server {
 	add_header Strict-Transport-Security "max-age=31536000";
 	{{- end }}
 
-	{{- if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
-	include {{ printf "/etc/nginx/vhost.d/%s" $host }};
+	{{- if (exists (printf "/etc/nginx/vhost.d/%s" .HOST)) }}
+	include {{ printf "/etc/nginx/vhost.d/%s" .HOST }};
 	{{- else if (exists "/etc/nginx/vhost.d/default") }}
 	include /etc/nginx/vhost.d/default;
 	{{- end }}
@@ -57,16 +57,16 @@ server {
 	location / {
 		{{- if eq $proto "uwsgi" }}
 		include uwsgi_params;
-		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
+		uwsgi_pass {{ trim $proto }}://{{ trim .HOST }};
 		{{- else }}
-		proxy_pass {{ trim $proto }}://{{ trim $host }};
+		proxy_pass {{ trim $proto }}://{{ trim .HOST }};
 		{{- end }}
-		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
+		{{- if (exists (printf "/etc/nginx/htpasswd/%s" .HOST)) }}
 		auth_basic	"Restricted {{ $host }}";
-		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
+		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" .HOST) }};
 		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" .HOST)) }}
+        include {{ printf "/etc/nginx/vhost.d/%s_location" .HOST}};
         {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
         include /etc/nginx/vhost.d/default_location;
         {{- end }}
@@ -83,8 +83,8 @@ server {
 	listen 80 {{ $default_server }};
 	access_log /var/log/nginx/access.log vhost;
 
-	{{- if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
-	include {{ printf "/etc/nginx/vhost.d/%s" $host }};
+	{{- if (exists (printf "/etc/nginx/vhost.d/%s" .HOST)) }}
+	include {{ printf "/etc/nginx/vhost.d/%s" .HOST }};
 	{{- else if (exists "/etc/nginx/vhost.d/default") }}
 	include /etc/nginx/vhost.d/default;
 	{{- end }}
@@ -92,16 +92,16 @@ server {
 	location / {
 		{{- if eq $proto "uwsgi" }}
 		include uwsgi_params;
-		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
+		uwsgi_pass {{ trim $proto }}://{{ trim .HOST }};
 		{{- else }}
-		proxy_pass {{ trim $proto }}://{{ trim $host }};
+		proxy_pass {{ trim $proto }}://{{ trim .HOST }};
 		{{- end }}
-		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
+		{{- if (exists (printf "/etc/nginx/htpasswd/%s" .HOST)) }}
 		auth_basic	"Restricted {{ $host }}";
-		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
+		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" .HOST) }};
 		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" .HOST)) }}
+        include {{ printf "/etc/nginx/vhost.d/%s_location" .HOST}};
         {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
         include /etc/nginx/vhost.d/default_location;
         {{- end }}
