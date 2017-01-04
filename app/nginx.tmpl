@@ -4,7 +4,7 @@
 {{ end }}
 
 {{ define "server" }}
-
+{{- $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict .HOST "" $default_host "default_server") .HOST }}
 {{- $proto := .FIRST.Labels.GetValue "rap.proto" "http"  }}
 {{- $https_method := .FIRST.Labels.GetValue "rap.https_method" "redirect" }}
@@ -193,7 +193,6 @@ server {
 {{- end -}}
 
 {{- $default_port := or (env "DEFAULT_PORT") "80" }}
-{{- $default_host := or (env "DEFAULT_HOST") "" }}
 
 # Rancher Services config
 
