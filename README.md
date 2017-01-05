@@ -195,7 +195,10 @@ $ docker run -d -p 80:80 -p 443:443 \
     adi90x/rancher-active-proxy
 ```
 
-You'll need apache2-utils on the machine where you plan to create the htpasswd file. Follow these [instructions](http://httpd.apache.org/docs/2.2/programs/htpasswd.html)
+You'll need apache2-utils on the machine where you plan to create the htpasswd file.
+Or you can use an nginx container to create the file ( using OpenSSL as explained in [Nginx Readme](http://wiki.nginx.org/Faq#How_do_I_generate_an_.htpasswd_file_without_having_Apache_tools_installed.3F) )
+
+`docker run -it nginx printf "Username_to_use:$(openssl passwd -crypt Password_to_use)\n" >> /path/to/htpasswd/{rap.host}`
 
 ### Custom Nginx Configuration
 
