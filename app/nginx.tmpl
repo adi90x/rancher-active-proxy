@@ -5,6 +5,10 @@
 
 {{ define "server" }}
 {{- $host := .HOST -}}
+
+{{- $http_ports := split (.FIRST.Labels.GetValue "rap.http_listen_ports") "," }}
+{{- $https_ports := split (.FIRST.Labels.GetValue "rap.https_listen_ports") "," }}
+
 {{- $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
