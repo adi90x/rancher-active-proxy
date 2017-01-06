@@ -42,7 +42,9 @@ update_certs() {
 			if [[ $acme_server == $actual_server ]]; then
 				force_renewal=""
 			else
+				
 				force_renewal="--break-my-certs --force-renewal"
+				sed -i  's|'"$actual_server"'|'"$acme_server"'|g' "/etc/letsencrypt/renewal/$base_domain.conf"
 			fi
 		fi
 	
