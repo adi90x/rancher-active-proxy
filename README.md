@@ -34,16 +34,18 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 #### Summary of available labels for proxied containers.
 
 
-|       Label        |            Description         |
-| ------------------ | ------------------------------ |
-| `rap.host`         | Virtual host to use ( several value could be separate by `,`
-| `rap.port`         | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
-| `rap.proto`        | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
-| `rap.cert_name`    | Certificat name to use for the virtual host. Default `rap.host`
-| `rap.https_method` | Https method (redirect, noredirect). Default : `redirect`
-| `rap.le_host`      | Certificat to create/renew with Letsencrypt
-| `rap.le_email`     | Email to use for Letsencrypt
-| `rap.le_test  `    | Set to true to use stagging letsencrypt server
+|       Label                |            Description         |
+| ---------------------------|------------------------------- |
+| `rap.host`                 | Virtual host to use ( several value could be separate by `,`
+| `rap.port`                 | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
+| `rap.proto`                | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
+| `rap.cert_name`            | Certificat name to use for the virtual host. Default `rap.host`
+| `rap.https_method`         | Https method (redirect, noredirect). Default : `redirect`
+| `rap.le_host`              | Certificat to create/renew with Letsencrypt
+| `rap.le_email`             | Email to use for Letsencrypt
+| `rap.le_test  `            | Set to true to use stagging letsencrypt server
+| `rap.http_listen_ports`    | External Port you want Rancher-Active-Proxy to listen http for this server ( Default : `80` )
+| `rap.https_listen_ports  ` | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
 
 #### Summary of environment variable available for Rancher Active Proxy.
 
@@ -103,6 +105,22 @@ If you need to support multiple virtual hosts for a container, you can separate 
 
 You can also use wildcards at the beginning and the end of host name, like `*.bar.com` or `foo.bar.*`. Or even a regular expression, which can be very useful in conjunction with a wildcard DNS service like [xip.io](http://xip.io), using `~^foo\.bar\..*\.xip\.io` will match `foo.bar.127.0.0.1.xip.io`, `foo.bar.10.0.2.2.xip.io` and all other given IPs. More information about this topic can be found in the nginx documentation about [`server_names`](http://nginx.org/en/docs/http/server_names.html).
 
+### Multiple Listening Port
+
+If needed you can use Rancher-Active-Proxy to listen for different port.
+
+`docker run -d -p 8081:8081 -p 81:81  adi90x/rancher-active-proxy`
+
+In this case, you can specify on which port Rancher Active Proxy should listen for a specific hostname :
+
+`docker run -d -l rap.host=foo.bar.com -l rap.listen_http_ports="81,8081" -l rap.port="53"   containerexposing/port53`
+
+In this situation Rancher Active Proxy will listen for request matching `rap.host` on both port `81` and `8081` of you host
+and route those request to port `53` of your container.
+
+Likewise, `rap.listen_https_ports` will work for https request.
+
+If you are not using port `80` and `443` at all you won't be able to use Let's Encrypt Automatic certificates.
 
 ### SSL Backends
 

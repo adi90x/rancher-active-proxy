@@ -5,6 +5,10 @@
 
 {{ define "server" }}
 {{- $host := .HOST -}}
+
+{{- $http_ports := split (.FIRST.Labels.GetValue "rap.http_listen_ports" "80" ) ","  }}
+{{- $https_ports := split (.FIRST.Labels.GetValue "rap.https_listen_ports" "443" ) "," }}
+
 {{- $default_host := or (env "DEFAULT_HOST") "" }}
 {{- $default_server := index (dict $host "" $default_host "default_server") $host }}
 
@@ -25,7 +29,9 @@
 {{- if eq $https_method "redirect" }} 
 server {
 	server_name {{ $host }};
-	listen 80 {{ $default_server }};
+	{{- range $port := $http_ports }}
+	listen {{$port}} {{ $default_server }};
+	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 301 https://$host$request_uri;
 }
@@ -33,7 +39,9 @@ server {
 
 server {
 	server_name {{ $host }};
-	listen 443 ssl http2 {{ $default_server }};
+	{{- range $port := $https_ports }}
+	listen {{$port}} ssl http2 {{ $default_server }};
+	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 
 	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
@@ -87,7 +95,9 @@ server {
 
 server {
 	server_name {{ $host }};
-	listen 80 {{ $default_server }};
+	{{- range $port := $http_ports }}
+	listen {{$port}}  {{ $default_server }};
+	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 
 	{{- if (exists (printf "/etc/nginx/vhost.d/%s" $host)) }}
@@ -119,7 +129,9 @@ server {
 
 server {
 	server_name {{ $host }};
-	listen 443 ssl http2 {{ $default_server }};
+	{{- range $port := $https_ports }}
+	listen {{$port}} ssl http2 {{ $default_server }};
+	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 500;
 
@@ -179,9 +191,22 @@ proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
 proxy_set_header Proxy "";
 {{- end }}
 
+{{- $http_ports_services := services | getAllLabelValue "*" "rap.http_listen_ports" ","}}
+{{- $http_ports_stand := host.Containers | getAllLabelValue "" "rap.http_listen_ports" ","}}
+{{- $http_ports := concatenateUnique $http_ports_services $http_ports_stand }}
+
+{{- $https_ports_services := services | getAllLabelValue "*" "rap.https_listen_ports" ","}}
+{{- $https_ports_stand := host.Containers | getAllLabelValue "" "rap.https_listen_ports" ","}}
+{{- $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
+
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 80;
+	{{- range $port := $http_ports }}
+	{{- if ne $port "80" }}
+	listen {{ $port }};
+    {{- end }}
+    {{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 503;
 }
@@ -190,6 +215,11 @@ server {
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 443 ssl http2;
+	{{- range $port := $https_ports }}
+	{{- if ne $port "443" }}
+	listen {{ $port }};
+    {{- end }}
+    {{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 503;
 
@@ -230,7 +260,7 @@ upstream {{ $host }} {
 
 # Standalone containers config
 
-{{- range $host, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
+{{ range $host, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
 
 upstream {{ $host }} {
 {{ range $cont := $conts }}
@@ -248,8 +278,7 @@ upstream {{ $host }} {
 {{end}} 	server localhost down;
 }
 
-
-{{- template "server" (dict "HOST" $host "FIRST" (first $conts)) }}
+{{ template "server" (dict "HOST" $host "FIRST" (first $conts)) }}
 
 {{- end -}}
 
