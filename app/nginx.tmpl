@@ -260,7 +260,7 @@ upstream {{ $host }} {
 
 # Standalone containers config
 
-{{- range $host, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
+{{ range $host, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
 
 upstream {{ $host }} {
 {{ range $cont := $conts }}
@@ -278,8 +278,7 @@ upstream {{ $host }} {
 {{end}} 	server localhost down;
 }
 
-
-{{- template "server" (dict "HOST" $host "FIRST" (first $conts)) }}
+{{ template "server" (dict "HOST" $host "FIRST" (first $conts)) }}
 
 {{- end -}}
 
