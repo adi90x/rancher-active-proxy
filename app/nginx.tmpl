@@ -191,12 +191,12 @@ proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
 proxy_set_header Proxy "";
 {{- end }}
 
-{{- $http_ports_services := services | groupByMulti "rap.http_listen_ports" ","}}
-{{- $http_ports_stand := host.Containers | groupByMultiFilter "" "rap.http_listen_ports" ","}}
+{{- $http_ports_services := services | getAllLabelValue "*" "rap.http_listen_ports" ","}}
+{{- $http_ports_stand := host.Containers | getAllLabelValue "" "rap.http_listen_ports" ","}}
 {{- $http_ports := concatenateUnique $http_ports_services $http_ports_stand }}
 
-{{- $https_ports_stand := host.Containers | groupByMultiFilter "" "rap.https_listen_ports" ","}}
-{{- $https_ports_services := services | groupByMulti "rap.https_listen_ports" ","}}
+{{- $https_ports_services := services | getAllLabelValue "*" "rap.https_listen_ports" ","}}
+{{- $https_ports_stand := host.Containers | getAllLabelValue "" "rap.https_listen_ports" ","}}
 {{- $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
 
 server {
