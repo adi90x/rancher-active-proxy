@@ -33,7 +33,7 @@ server {
 	listen {{$port}} {{ $default_server }};
 	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
-	return 301 https://$host$request_uri;
+	return 301 https://$host:{{(first $https_ports)}}$request_uri;
 }
 {{- end}}
 
@@ -80,11 +80,11 @@ server {
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
 		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
-        {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
-        include /etc/nginx/vhost.d/default_location;
-        {{- end }}
+        	{{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
+        	include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+        	{{- else if (exists "/etc/nginx/vhost.d/default_location") }}
+        	include /etc/nginx/vhost.d/default_location;
+        	{{- end }}
 	}
 }
 
@@ -117,11 +117,11 @@ server {
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
 		{{- end }}
-        {{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
-        include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
-        {{- else if (exists "/etc/nginx/vhost.d/default_location") }}
-        include /etc/nginx/vhost.d/default_location;
-        {{- end }}
+        	{{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
+        	include {{ printf "/etc/nginx/vhost.d/%s_location" $host}};
+        	{{- else if (exists "/etc/nginx/vhost.d/default_location") }}
+        	include /etc/nginx/vhost.d/default_location;
+        	{{- end }}
 	}
 }
 
@@ -205,8 +205,8 @@ server {
 	{{- range $port := $http_ports }}
 	{{- if ne $port "80" }}
 	listen {{ $port }};
-    {{- end }}
-    {{- end }}
+    	{{- end }}
+    	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 503;
 }
@@ -218,8 +218,8 @@ server {
 	{{- range $port := $https_ports }}
 	{{- if ne $port "443" }}
 	listen {{ $port }};
-    {{- end }}
-    {{- end }}
+    	{{- end }}
+    	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 503;
 
