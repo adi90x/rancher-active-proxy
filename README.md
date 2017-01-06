@@ -120,6 +120,8 @@ and route those request to port `53` of your container.
 
 Likewise, `rap.listen_https_ports` will work for https request.
 
+If you are not using port `80` and `443` at all you won't be able to use Let's Encrypt Automatic certificates.
+
 ### SSL Backends
 
 If you would like the reverse proxy to connect to your backend using HTTPS instead of HTTP
