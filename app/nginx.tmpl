@@ -30,7 +30,7 @@
 server {
 	server_name {{ $host }};
 	{{- range $port := $http_ports }}
-	listen $port {{ $default_server }};
+	listen {{$port}} {{ $default_server }};
 	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 301 https://$host$request_uri;
@@ -40,7 +40,7 @@ server {
 server {
 	server_name {{ $host }};
 	{{- range $port := $https_ports }}
-	listen $port ssl http2 {{ $default_server }};
+	listen {{$port}} ssl http2 {{ $default_server }};
 	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 
@@ -96,7 +96,7 @@ server {
 server {
 	server_name {{ $host }};
 	{{- range $port := $http_ports }}
-	listen $port  {{ $default_server }};
+	listen {{$port}}  {{ $default_server }};
 	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 
@@ -130,7 +130,7 @@ server {
 server {
 	server_name {{ $host }};
 	{{- range $port := $https_ports }}
-	listen $port ssl http2 {{ $default_server }};
+	listen {{$port}} ssl http2 {{ $default_server }};
 	{{- end }}
 	access_log /var/log/nginx/access.log vhost;
 	return 500;
@@ -191,13 +191,13 @@ proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
 proxy_set_header Proxy "";
 {{- end }}
 
-{{- range $http_ports_services, $services := services | groupByMulti "rap.http_listen_port" ","}}
-{{- range $http_ports_stand, $conts := host.Containers | groupByMultiFilter "" "rap.http_listen_port" ","}}
-{{- range $http_ports := concatenateUnique $http_ports_services $http_ports_stand }}
+{{- $http_ports_services := services | groupByMulti "rap.http_listen_ports" ","}}
+{{- $http_ports_stand := host.Containers | groupByMultiFilter "" "rap.http_listen_ports" ","}}
+{{- $http_ports := concatenateUnique $http_ports_services $http_ports_stand }}
 
-{{- range $https_ports_stand, $conts := host.Containers | groupByMultiFilter "" "rap.https_listen_port" ","}}
-{{- range $https_ports_services, $services := services | groupByMulti "rap.https_listen_port" ","}}
-{{- range $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
+{{- $https_ports_stand := host.Containers | groupByMultiFilter "" "rap.https_listen_ports" ","}}
+{{- $https_ports_services := services | groupByMulti "rap.https_listen_ports" ","}}
+{{- $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
 
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
