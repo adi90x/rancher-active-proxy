@@ -193,11 +193,11 @@ proxy_set_header Proxy "";
 
 {{- range $http_ports_services, $services := services | groupByMulti "rap.http_listen_port" ","}}
 {{- range $http_ports_stand, $conts := host.Containers | groupByMultiFilter "" "rap.http_listen_port" ","}}
-{{- range $http_ports := concatenateUnique($http_ports_services, $http_ports_stand) }}
+{{- range $http_ports := concatenateUnique $http_ports_services $http_ports_stand }}
 
 {{- range $https_ports_stand, $conts := host.Containers | groupByMultiFilter "" "rap.https_listen_port" ","}}
 {{- range $https_ports_services, $services := services | groupByMulti "rap.https_listen_port" ","}}
-{{- range $https_ports := concatenateUnique($https_ports_services, $https_ports_stand) }}
+{{- range $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
 
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
@@ -215,7 +215,7 @@ server {
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 443 ssl http2;
-	{{- range $port := $http_ports }}
+	{{- range $port := $https_ports }}
 	{{- if ne $port "443" }}
 	listen {{ $port }};
     {{- end }}
