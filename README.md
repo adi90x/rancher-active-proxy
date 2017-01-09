@@ -96,6 +96,25 @@ The below part is mostly taken from jwilder/nginx-proxy [README](https://github.
 ### Multiple Ports
 
 If your container exposes multiple ports, Rancher Active Proxy will use `rap.port` label, then use the expose port if there is only one port exposed, or default to `DEFAULT_PORT` environmental variable ( which is set by default to `80` ).
+Or you can try your hand at the Advanced `rap.host` syntax.
+
+### Advanced `rap.host` syntax
+
+Using the Advanced `rap.host` syntax you can specify multiple host names to each go to their own backend port. 
+Basically provides support for `rap.host`, `rap.port`, and `rap.proto` all in one field.
+
+For example, given the following:
+
+```
+rap.host=api.example.com=>http:80,api-admin.example.com=>http:8001,secure.example.com=>https:8443
+```
+
+This would yield 3 different server/upstream configurations...
+
+ 1. Requests for api.example.com would route to this container's port 80 via http
+ 2. Requests for api-admin.example.com would route to this containers port 8001 via http
+ 3. Requests for secure.example.com would route to this containers port 8443 via https
+ 
 
 ### Multiple Hosts
 
