@@ -262,7 +262,7 @@ upstream {{ $host }} {
 {{end}} 	server localhost down;
 }
 
-{{- template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
+{{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
 
 {{- end -}}
 
