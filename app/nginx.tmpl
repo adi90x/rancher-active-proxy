@@ -234,7 +234,7 @@ server {
 # Rancher Services config
 
 {{- range $opt, $services := services | groupByMulti "rap.host" ","}}
-{{- $parts := split $opt "_"}}
+{{- $parts := split $opt "=>"}}
 {{- $host := first $parts | trim }}
 {{- $dest := last $parts | trim }}
 {{- $destParts := split (when (ne $host $dest) $dest ":") ":" }}
@@ -270,7 +270,7 @@ upstream {{ $host }} {
 # Standalone containers config
 
 {{ range $opt, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
-{{- $parts := split $opt "_"}}
+{{- $parts := split $opt "=>"}}
 {{- $host := first $parts | trim }}
 {{- $dest := last $parts | trim }}
 {{- $destParts := split (when (ne $host $dest) $dest ":") ":" }}
