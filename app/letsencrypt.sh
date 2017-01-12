@@ -50,8 +50,7 @@ update_certs() {
 	    
 	    # Split domain by ';'  create all config needed and create domain parameter for certbot 
 	    listdomain=${base_domain//;/$'\n'}
-	    for dom in $listdomain
-        do
+	    for dom in $listdomain; do
         # Add location configuration for the domain
 		add_location_configuration "$dom"
 		# Create a domain parameter for certbot
@@ -69,8 +68,12 @@ update_certs() {
 			--webroot -w /usr/share/nginx/html 
 	    
 		echo " "
-
-		setup_certs $base_domain
+		#Setting the cert for all domain it was created for !
+		domarray=( $listdomain )
+		certname=${domarray[0]}
+		for dom in $listdomain; do
+		setup_certs $dom $certname
+		done
 		domainparam=""
     done
 	
