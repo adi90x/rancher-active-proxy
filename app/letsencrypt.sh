@@ -47,27 +47,37 @@ update_certs() {
 				sed -i  's|'"$actual_server"'|'"$acme_server"'|g' "/etc/letsencrypt/renewal/$base_domain.conf"
 			fi
 		fi
+	    
+	    # Split domain by ';'  create all config needed and create domain parameter for certbot 
+	    listdomain=${base_domain//;/$'\n'}
+	    for dom in $listdomain; do
+        # Add location configuration for the domain
+		add_location_configuration "$dom"
+		# Create a domain parameter for certbot
+		domainparam="$domainparam -d $dom "
+        done
 	
-		# Add location configuration for the domain
-		add_location_configuration "$base_domain"
-
 		#Reload Nginx once location added
 		reload_nginx
 
 		echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
 
 		certbot certonly -t --agree-tos $debug $force_renewal \
-			-m ${!email_varname} -n -d $base_domain \
-			--server $acme_server \
+			-m ${!email_varname} -n  $domainparam \
+			--server $acme_server --expand \
 			--webroot -w /usr/share/nginx/html 
 	    
 		echo " "
-
-		setup_certs $base_domain		
+		#Setting the cert for all domain it was created for !
+		domarray=( $listdomain )
+		certname=${domarray[0]}
+		for dom in $listdomain; do
+		setup_certs $dom $certname
+		done
+		domainparam=""
     done
 	
     reload_nginx
 }
 
 update_certs
-

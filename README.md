@@ -88,6 +88,16 @@ And you should either start Rancher Active Proxy with environment variable `DEFA
 
 If you are developping I recommend to add `rap.le_test=true` to the container in order to use Let's Encrypt stagging environment and to not exceed limits.
 
+#### SAN certificates
+
+Rancher Active Proxy support SAN certifcates ( one certificate for several domains ).
+
+To create a SAN certificate you need to separate hostname by ";" ( instead of "," for separate domains)
+
+`rap.le_host=admin.foo.com;api.foo.com;mail.foo.com`
+
+This will create a single certificate matching : admin.foo.com, api.foo.com, mail.foo.com .
+The certificate created will be name `admin.foo.com` but symlink will be create to match all domain.
 
 ***
 
