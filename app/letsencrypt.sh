@@ -81,4 +81,3 @@ update_certs() {
 }
 
 update_certs
-
