@@ -49,7 +49,7 @@ update_certs() {
 		fi
 	
 		# Add location configuration for the domain
-		add_location_configuration "$domain"
+		add_location_configuration "$base_domain"
 
 		#Reload Nginx once location added
 		reload_nginx
