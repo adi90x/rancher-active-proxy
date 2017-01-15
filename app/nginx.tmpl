@@ -245,7 +245,7 @@ server {
 upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
-{{- range $cont := $service.Containers}}
+{{- range $cont := $service.Containers | filterHost (or (env "SPECIFIC_HOST") "*") }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
         {{- else if .Labels.Exists "rap.port"}}
