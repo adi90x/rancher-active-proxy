@@ -265,11 +265,11 @@ upstream {{ $host }} {
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
 
-{{- end -}}
-
+{{- end }}
 
 # Standalone containers config
-{{ if or (eq host.Name "*") (eq host.Name $host_filter) }}
+
+{{ if or (eq $host_filter "*") (eq host.Name $host_filter) }}
 {{- range $opt, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
 {{- $parts := split $opt "=>"}}
 {{- $host := first $parts | trim }}
