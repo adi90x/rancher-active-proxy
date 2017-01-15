@@ -57,6 +57,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `DEFAULT_EMAIL`    | Default Email for Letsencrypt.
 | `RAP_DEBUG` 		 | Define Rancher-Gen-Rap verbosity (Valid values: "debug", "info", "warn", and "error"). Default: `info`
 | `DEFAULT_PORT` 	 | Default port use for containers ( Default : 80 )
+| `SPECIFIC_HOST` 	 | Limit RAP to only containers of a specific host name
 
 #### Quick Summary of interesting volume to mount.
 
