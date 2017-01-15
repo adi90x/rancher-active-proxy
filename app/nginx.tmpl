@@ -230,6 +230,7 @@ server {
 {{- end -}}
 
 {{- $default_port := or (env "DEFAULT_PORT") "80" }}
+{{- $host_filter := or (env "SPECIFIC_HOST") "*" }}
 
 # Rancher Services config
 
@@ -245,7 +246,7 @@ server {
 upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
-{{- range $cont := $service.Containers | filterHost (or (env "SPECIFIC_HOST") "*") }}
+{{- range $cont := $service.Containers | filterHost $host_filter }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
         {{- else if .Labels.Exists "rap.port"}}
@@ -268,8 +269,8 @@ upstream {{ $host }} {
 
 
 # Standalone containers config
-
-{{ range $opt, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
+{{ if or (eq host.Name "*") (eq host.Name $host_filter) }}
+{{- range $opt, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
 {{- $parts := split $opt "=>"}}
 {{- $host := first $parts | trim }}
 {{- $dest := last $parts | trim }}
@@ -278,7 +279,7 @@ upstream {{ $host }} {
 {{- $destPort := last $destParts }}
 
 upstream {{ $host }} {
-{{ range $cont := $conts | filterHost (or (env "SPECIFIC_HOST") "*") }}
+{{ range $cont := $conts }}
 {{- $addrLen := len $cont.Ports }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
@@ -297,5 +298,6 @@ upstream {{ $host }} {
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $conts)  "PROTO" $destProto) }}
 
+{{- end -}}
 {{- end -}}
 
