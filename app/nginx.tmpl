@@ -278,7 +278,7 @@ upstream {{ $host }} {
 {{- $destPort := last $destParts }}
 
 upstream {{ $host }} {
-{{ range $cont := $conts }}
+{{ range $cont := $conts | filterHost (or (env "SPECIFIC_HOST") "*") }}
 {{- $addrLen := len $cont.Ports }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
