@@ -1,4 +1,5 @@
 ### Last Change ###
 
+15/01/17 : Adding Host filtering. Enable limiting RAP to containers of a specific host.
 13/01/17 : Adding SAN certificates support.
 09/01/17 : Adding Advanced Syntax for host. Enable multiple host to be route to different port in a container.
