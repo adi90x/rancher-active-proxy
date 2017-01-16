@@ -1,6 +1,12 @@
 {{ define "upstream" }}
+{{- if eq .FIRST "true" }}
+upstream {{.HOST}} {
+    #Acces through rancher managed network
+	server {{.IP}}:{{.PORT}};
+{{- else -}}
 	#Acces through rancher managed network
 	server {{.IP}}:{{.PORT}};
+{{- end -}}	
 {{ end }}
 
 {{ define "server" }}
@@ -243,34 +249,33 @@ server {
 {{- $destPort := last $destParts }}
 {{- $alive := cell false }}
 
-upstream {{ $host }} {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
 {{- range $cont := $service.Containers | filterHost $host_filter }}
         {{- if ne $destPort ""}}
-            {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
+            {{- template "upstream" (dict "HOST" $host "FIRST" $alive.Get "IP" $cont.Address "PORT" $destPort) }}
             {{ $alive.Set true }}
         {{- else if .Labels.Exists "rap.port"}}
 		    {{- $port := .Labels.GetValue "rap.port" "80" }}
-		    {{- template "upstream" (dict "IP" $cont.Address "PORT" $port) }}
+		    {{- template "upstream" (dict "HOST" $host "FIRST" $alive.Get "IP" $cont.Address "PORT" $port) }}
 		    {{ $alive.Set true }}
         {{- else if eq $addrLen 1 }}
 	        {{- $intport := (first $service.Ports).InternalPort }}
-	        {{- template "upstream" (dict "IP" $cont.Address "PORT" $intport) }}
+	        {{- template "upstream" (dict "HOST" $host "FIRST" $alive.Get "IP" $cont.Address "PORT" $intport) }}
 	        {{ $alive.Set true }}
 	    {{- else }}
-		     {{- template "upstream" (dict "IP" $cont.Address "PORT" $default_port) }}
+		     {{- template "upstream" (dict "HOST" $host "FIRST" $alive.Get "IP" $cont.Address "PORT" $default_port) }}
 		     {{ $alive.Set true }}
 	    {{- end }}
 {{- end -}}
 {{- end -}}
-{{- if eq $alive.Get "false" }}
+{{- if eq $alive.Get "true" }}
 server localhost down;
-{{- end -}}
 }
-{{- if eq $alive.Get "true" -}}
+
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
-{{- end -}}
+
+{{ end -}}
 {{- end }}
 
 # Standalone containers config
