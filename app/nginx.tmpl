@@ -254,23 +254,23 @@ server {
 {{- range $cont := $service.Containers | filterHost $host_filter }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $destPort) }}
-            {{ $_ := $alive.Set true }}
+            {{- $_ := $alive.Set true }}
         {{- else if .Labels.Exists "rap.port"}}
 		    {{- $port := .Labels.GetValue "rap.port" "80" }}
 		    {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $port) }}
-		    {{ $_ := $alive.Set true }}
+		    {{- $_ := $alive.Set true }}
         {{- else if eq $addrLen 1 }}
 	        {{- $intport := (first $service.Ports).InternalPort }}
 	        {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $intport) }}
-	        {{ $_ := $alive.Set true }}
+	        {{- $_ := $alive.Set true }}
 	    {{- else }}
 		     {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $default_port) }}
-		     {{ $_ := $alive.Set true }}
+		     {{- $_ := $alive.Set true }}
 	    {{- end }}
 {{- end -}}
 {{- end -}}
 {{- if $alive.Get }}
-server localhost down;
+    server localhost down;
 }
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
@@ -294,22 +294,22 @@ server localhost down;
 {{- $addrLen := len $cont.Ports }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $destPort) }}
-            {{ $_ := $alive.Set true }}
+            {{- $_ := $alive.Set true }}
         {{- else if .Labels.Exists "rap.port"}}
 		    {{- $port := .Labels.GetValue "rap.port" "80" }}
 		    {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $port) }}
-		    {{ $_ := $alive.Set true }}
+		    {{- $_ := $alive.Set true }}
         {{- else if eq $addrLen 1 }}
 	        {{- $intport := (first $cont.Ports).InternalPort }}
 	        {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $intport ) }}
-	        {{ $_ := $alive.Set true }}
+	        {{- $_ := $alive.Set true }}
 	    {{- else }}
 		     {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $default_port) }}
-		     {{ $_ := $alive.Set true }}
+		     {{- $_ := $alive.Set true }}
 	    {{- end }}
 {{- end -}}
 {{- if $alive.Get }}
-server localhost down;
+    server localhost down;
 }
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $conts)  "PROTO" $destProto) }}
