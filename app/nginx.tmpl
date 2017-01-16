@@ -264,11 +264,11 @@ upstream {{ $host }} {
 	    {{- end }}
 {{- end -}}
 {{- end -}}
-{{- if eq $alive "false" }}
+{{- if eq $alive.Get "false" }}
 server localhost down;
 {{- end -}}
 }
-{{- if eq $alive "true" -}}
+{{- if eq $alive.Get "true" -}}
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
 {{- end -}}
 {{- end }}
@@ -304,11 +304,11 @@ upstream {{ $host }} {
 		     {{ $alive.Set true }}
 	    {{- end }}
 {{- end -}}
-{{- if eq $alive "false" }}
+{{- if eq $alive.Get "false" }}
 server localhost down;
 {{- end -}}
 }
-{{- if eq $alive "true" -}}
+{{- if eq $alive.Get "true" -}}
 {{ template "server" (dict "HOST" $host "FIRST" (first $conts)  "PROTO" $destProto) }}
 {{- end -}}
 {{- end -}}
