@@ -241,7 +241,7 @@ server {
 {{- $destParts := split (when (ne $host $dest) $dest ":") ":" }}
 {{- $destProto := first $destParts }}
 {{- $destPort := last $destParts }}
-
+{{- $alive := cell false }}
 
 upstream {{ $host }} {
 {{range $service := $services}}
@@ -249,22 +249,28 @@ upstream {{ $host }} {
 {{- range $cont := $service.Containers | filterHost $host_filter }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
+            {{ $alive.Set true }}
         {{- else if .Labels.Exists "rap.port"}}
 		    {{- $port := .Labels.GetValue "rap.port" "80" }}
 		    {{- template "upstream" (dict "IP" $cont.Address "PORT" $port) }}
+		    {{ $alive.Set true }}
         {{- else if eq $addrLen 1 }}
 	        {{- $intport := (first $service.Ports).InternalPort }}
 	        {{- template "upstream" (dict "IP" $cont.Address "PORT" $intport) }}
-	        {{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var, falling back to standard web port 80 */}}
+	        {{ $alive.Set true }}
 	    {{- else }}
 		     {{- template "upstream" (dict "IP" $cont.Address "PORT" $default_port) }}
+		     {{ $alive.Set true }}
 	    {{- end }}
 {{- end -}}
-{{end}} 	server localhost down;
+{{- end -}}
+{{- if eq $alive "false" }}
+server localhost down;
+{{- end -}}
 }
-
+{{- if eq $alive "true" -}}
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
-
+{{- end -}}
 {{- end }}
 
 # Standalone containers config
@@ -277,27 +283,34 @@ upstream {{ $host }} {
 {{- $destParts := split (when (ne $host $dest) $dest ":") ":" }}
 {{- $destProto := first $destParts }}
 {{- $destPort := last $destParts }}
+{{- $alive := cell false }}
 
 upstream {{ $host }} {
 {{ range $cont := $conts }}
 {{- $addrLen := len $cont.Ports }}
         {{- if ne $destPort ""}}
             {{- template "upstream" (dict "IP" $cont.Address "PORT" $destPort) }}
+            {{ $alive.Set true }}
         {{- else if .Labels.Exists "rap.port"}}
 		    {{- $port := .Labels.GetValue "rap.port" "80" }}
 		    {{- template "upstream" (dict "IP" $cont.Address "PORT" $port) }}
+		    {{ $alive.Set true }}
         {{- else if eq $addrLen 1 }}
 	        {{- $intport := (first $cont.Ports).InternalPort }}
 	        {{- template "upstream" (dict "IP" $cont.Address "PORT" $intport ) }}
-	        {{/* If more than one port exposed, use the one matching VIRTUAL_PORT env var, falling back to standard web port 80 */}}
+	        {{ $alive.Set true }}
 	    {{- else }}
 		     {{- template "upstream" (dict "IP" $cont.Address "PORT" $default_port) }}
+		     {{ $alive.Set true }}
 	    {{- end }}
-{{end}} 	server localhost down;
+{{- end -}}
+{{- if eq $alive "false" }}
+server localhost down;
+{{- end -}}
 }
-
+{{- if eq $alive "true" -}}
 {{ template "server" (dict "HOST" $host "FIRST" (first $conts)  "PROTO" $destProto) }}
-
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
