@@ -1,5 +1,6 @@
 ### Last Change ###
 
+16/01/17 : Add X-Forwarded-Ssl to proxy.conf
 16/01/17 : Rework template logic in order to have a cleaner generated config file.
 15/01/17 : Adding Host filtering. Enable limiting RAP to containers of a specific host.
 13/01/17 : Adding SAN certificates support.
