@@ -40,7 +40,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `rap.port`                 | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
 | `rap.proto`                | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
 | `rap.cert_name`            | Certificat name to use for the virtual host. Default `rap.host`
-| `rap.https_method`         | Https method (redirect, noredirect). Default : `redirect`
+| `rap.https_method`         | Https method (redirect, noredirect, nohttps). Default : `redirect`
 | `rap.le_host`              | Certificat to create/renew with Letsencrypt
 | `rap.le_email`             | Email to use for Letsencrypt
 | `rap.le_test  `            | Set to true to use stagging letsencrypt server
