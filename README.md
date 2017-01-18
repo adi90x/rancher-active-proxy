@@ -11,6 +11,8 @@ Rancher Active Proxy replace docker-gen by Rancher-gen-rap [adi90x/rancher-gen-r
 
 Rancher Active Proxy use label instead of environmental value.
 
+I would recommend to use latest image from DockerHub or you can use tag versions. Keep in mind that branch are mostly development features and could not work as expected.
+
 ### Easy Setup with catalog
 
 Add `https://github.com/adi90x/rancher-active-proxy.git` to your custom catalog list( Rancher > Admin > Settings ).
