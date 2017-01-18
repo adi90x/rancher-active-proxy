@@ -1,9 +1,18 @@
 ### Last Change ###
 
-17/07/17 : Remove DES-based SSL ciphers to increase security
-17/07/17 : Add support for 'nohttps' method in rap.https_method. This disable https part of the template for a container.
-16/01/17 : Add X-Forwarded-Ssl to proxy.conf
-16/01/17 : Rework template logic in order to have a cleaner generated config file.
-15/01/17 : Adding Host filtering. Enable limiting RAP to containers of a specific host.
-13/01/17 : Adding SAN certificates support.
-09/01/17 : Adding Advanced Syntax for host. Enable multiple host to be route to different port in a container.
+17/07/17 : v0.8.3 - Remove DES-based SSL ciphers to increase security
+17/07/17 : v0.8.2 - Add support for 'nohttps' method in rap.https_method. This disable https part of the template for a container.
+16/01/17 : v0.8.1 - Add X-Forwarded-Ssl to proxy.conf
+16/01/17 : v0.8.0 - Rework template logic in order to have a cleaner generated config file.
+15/01/17 : v0.7.0 - Adding Host filtering. Enable limiting RAP to containers of a specific host.
+13/01/17 : v0.6.0 - Adding SAN certificates support.
+09/01/17 : v0.5.0 - Adding Advanced Syntax for host. Enable multiple host to be route to different port in a container.
+06/01/17 : v0.4.0 - Adding per container RAP listening port
+03/01/17 : v0.3.0 - Merging nginx and nginx-standalone template
+02/01/17 : v0.2.3 - Add a down server to every upstream to avoid error
+30/12/16 : v0.2.2 - Add environmental variable to set default port
+29/12/16 : v0.2.1 - Using fullchain cert in nginx
+24/12/16 : v0.2.0 - Adding Standalone containers support
+21/12/16 : v0.1.1 - Add CRON and DEBUG environmental variable
+20/12/16 : v0.1.0 - Certbot/Let's Encrypt first support
+11/12/16 : v0.0.1 - Initial Release 
