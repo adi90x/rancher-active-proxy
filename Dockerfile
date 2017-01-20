@@ -13,6 +13,7 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/$VERSION_RANCHER_GEN/
 	&& unzip /tmp/rancher-gen-rap.zip -d /usr/local/bin \
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& chmod u+x /usr/local/bin/forego \
+	&& chmod u+x /app/remove \
 	&& rm -f /tmp/rancher-gen-rap.zip
 	
 #Copying all templates and script	
