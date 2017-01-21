@@ -143,6 +143,12 @@ Likewise, `rap.listen_https_ports` will work for https request.
 
 If you are not using port `80` and `443` at all you won't be able to use Let's Encrypt Automatic certificates.
 
+### Specific Host Name
+
+Using environmental value SPECIFIC_HOST you can limit Rancher Active Proxy to containers running on a single host.
+
+Just start Rancher Active Proxy like that : `docker run -d -p 80:80 -e SPECIFIC_HOST=Hostnameofthehost adi90x/rancher-active-proxy
+
 ### Remove Script
 
 Rancher Active Proxy pack an easy script to revoke/delete a certificate.
