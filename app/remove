@@ -1,0 +1,21 @@
+#!/bin/bash
+
+dom="${1:-}"
+
+#Check if something has been pass to the script
+if [ -z "$dom" ]; then
+        echo "Nothing to delete has been pass to the script. You must run it with an argument ( use '*' to delete everything ) "
+else
+# Delete all certificates that match regex : input*
+rm -rf /etc/letsencrypt/archive/$dom*
+rm -rf /etc/letsencrypt/live/$dom*
+rm -rf /etc/letsencrypt/renewal/$dom*
+fi
+
+#Rerun rancher-gen to recreate a correct configuration
+
+#Delete file to avoid looping problem
+rm -f /etc/nginx/conf.d/default.conf
+
+#Rerun rancher-gen to recreate a new nginx config file 
+rancher-gen --onetime /app/nginx.tmpl /etc/nginx/conf.d/default.conf

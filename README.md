@@ -102,9 +102,6 @@ To create a SAN certificate you need to separate hostname by ";" ( instead of ",
 This will create a single certificate matching : admin.foo.com, api.foo.com, mail.foo.com .
 The certificate created will be name `admin.foo.com` but symlink will be create to match all domain.
 
-***
-
-The below part is mostly taken from jwilder/nginx-proxy [README](https://github.com/jwilder/nginx-proxy/blob/master/README.md) and modify to reflect Rancher Active Proxy
 
 ### Multiple Ports
 
@@ -129,14 +126,6 @@ This would yield 3 different server/upstream configurations...
  3. Requests for secure.example.com would route to this containers port 8443 via https
  
 
-### Multiple Hosts
-
-If you need to support multiple virtual hosts for a container, you can separate each entry with commas.  For example, `foo.bar.com,baz.bar.com,bar.com` and each host will be setup the same.
-
-### Wildcard Hosts
-
-You can also use wildcards at the beginning and the end of host name, like `*.bar.com` or `foo.bar.*`. Or even a regular expression, which can be very useful in conjunction with a wildcard DNS service like [xip.io](http://xip.io), using `~^foo\.bar\..*\.xip\.io` will match `foo.bar.127.0.0.1.xip.io`, `foo.bar.10.0.2.2.xip.io` and all other given IPs. More information about this topic can be found in the nginx documentation about [`server_names`](http://nginx.org/en/docs/http/server_names.html).
-
 ### Multiple Listening Port
 
 If needed you can use Rancher-Active-Proxy to listen for different port.
@@ -145,7 +134,7 @@ If needed you can use Rancher-Active-Proxy to listen for different port.
 
 In this case, you can specify on which port Rancher Active Proxy should listen for a specific hostname :
 
-`docker run -d -l rap.host=foo.bar.com -l rap.listen_http_ports="81,8081" -l rap.port="53"   containerexposing/port53`
+`docker run -d -l rap.host=foo.bar.com -l rap.listen_http_ports="81,8081" -l rap.port="53" containerexposing/port53`
 
 In this situation Rancher Active Proxy will listen for request matching `rap.host` on both port `81` and `8081` of you host
 and route those request to port `53` of your container.
@@ -153,6 +142,38 @@ and route those request to port `53` of your container.
 Likewise, `rap.listen_https_ports` will work for https request.
 
 If you are not using port `80` and `443` at all you won't be able to use Let's Encrypt Automatic certificates.
+
+### Specific Host Name
+
+Using environmental value SPECIFIC_HOST you can limit Rancher Active Proxy to containers running on a single host.
+
+Just start Rancher Active Proxy like that : `docker run -d -p 80:80 -e SPECIFIC_HOST=Hostnameofthehost adi90x/rancher-active-proxy`
+
+### Remove Script
+
+Rancher Active Proxy pack an easy script to revoke/delete a certificate.
+
+You can run it : `docker run adi90x/rancher-active-proxy /app/remove DomainCertToRemove`
+
+Script is adding '*' at the end of the command therefore `/app/remove foo` will delete `foo.bar.com , foo.bar.org, foo.bar2.com ..`
+
+Special attention if you are using it with SAN certificates you need to be careful and run it for each domain in the SAN certificate.
+
+Do not forget to delete the label on the container before using that script or it will be recreated on next update.
+
+If you are starting it with Rancher do not forget to set Auto Restart : Never (Start Once)
+
+***
+
+The below part is mostly taken from jwilder/nginx-proxy [README](https://github.com/jwilder/nginx-proxy/blob/master/README.md) and modify to reflect Rancher Active Proxy
+
+### Multiple Hosts
+
+If you need to support multiple virtual hosts for a container, you can separate each entry with commas.  For example, `foo.bar.com,baz.bar.com,bar.com` and each host will be setup the same.
+
+### Wildcard Hosts
+
+You can also use wildcards at the beginning and the end of host name, like `*.bar.com` or `foo.bar.*`. Or even a regular expression, which can be very useful in conjunction with a wildcard DNS service like [xip.io](http://xip.io), using `~^foo\.bar\..*\.xip\.io` will match `foo.bar.127.0.0.1.xip.io`, `foo.bar.10.0.2.2.xip.io` and all other given IPs. More information about this topic can be found in the nginx documentation about [`server_names`](http://nginx.org/en/docs/http/server_names.html).
 
 ### SSL Backends
 

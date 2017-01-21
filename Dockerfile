@@ -23,7 +23,8 @@ WORKDIR /app/
 RUN chmod +x /app/letsencrypt.sh \
     && mkdir -p /etc/nginx/certs /etc/nginx/vhost.d /etc/nginx/conf.d /usr/share/nginx/html / \
     && echo "daemon off;" >> /etc/nginx/nginx.conf \
-    && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
+    && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf \
+    && chmod u+x /app/remove 
 
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
