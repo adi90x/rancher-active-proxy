@@ -47,7 +47,9 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `rap.le_email`             | Email to use for Letsencrypt
 | `rap.le_test  `            | Set to true to use stagging letsencrypt server
 | `rap.http_listen_ports`    | External Port you want Rancher-Active-Proxy to listen http for this server ( Default : `80` )
-| `rap.https_listen_ports  ` | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
+| `rap.https_listen_ports`   | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
+| `rap.server_tokens`    	 | Enable to specify the server_token value per container
+| `rap.client_max_body_size` | Enable to specify the client_max_body_size directive per container 
 
 #### Summary of environment variable available for Rancher Active Proxy.
 
