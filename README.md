@@ -147,17 +147,21 @@ If you are not using port `80` and `443` at all you won't be able to use Let's E
 
 Using environmental value SPECIFIC_HOST you can limit Rancher Active Proxy to containers running on a single host.
 
-Just start Rancher Active Proxy like that : `docker run -d -p 80:80 -e SPECIFIC_HOST=Hostnameofthehost adi90x/rancher-active-proxy
+Just start Rancher Active Proxy like that : `docker run -d -p 80:80 -e SPECIFIC_HOST=Hostnameofthehost adi90x/rancher-active-proxy`
 
 ### Remove Script
 
 Rancher Active Proxy pack an easy script to revoke/delete a certificate.
 
-You can run it : `docker run adi90x/rancher-active-proxy remove DomainCertToRemove`
+You can run it : `docker run adi90x/rancher-active-proxy /app/remove DomainCertToRemove`
+
+Script is adding '*' at the end of the command therefore `/app/remove foo` will delete `foo.bar.com , foo.bar.org, foo.bar2.com ..`
 
 Special attention if you are using it with SAN certificates you need to be careful and run it for each domain in the SAN certificate.
 
 Do not forget to delete the label on the container before using that script or it will be recreated on next update.
+
+If you are starting it with Rancher do not forget to set Auto Restart : Never (Start Once)
 
 ***
 
