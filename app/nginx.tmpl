@@ -10,7 +10,13 @@
 {{ end }}
 
 {{ define "server" }}
-{{- $host := .HOST -}}
+
+{{ $host := .HOST -}}
+{{- if (exists (printf "/etc/nginx/vhost.d/%s_server" $host)) }}
+include {{ printf "/etc/nginx/vhost.d/%s_server" $host}};
+{{- else if (exists "/etc/nginx/vhost.d/default_server") }}
+include /etc/nginx/vhost.d/default_server;
+{{- else }}
 
 {{- $http_ports := split (.FIRST.Labels.GetValue "rap.http_listen_ports" "80" ) ","  }}
 {{- $https_ports := split (.FIRST.Labels.GetValue "rap.https_listen_ports" "443" ) "," }}
@@ -178,6 +184,7 @@ server {
 {{- end -}}
 {{- end -}}
 
+{{- end -}}
 {{- end -}}
 
 # If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
