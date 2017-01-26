@@ -165,6 +165,39 @@ Do not forget to delete the label on the container before using that script or i
 
 If you are starting it with Rancher do not forget to set Auto Restart : Never (Start Once)
 
+#### Per-host server configuration
+
+If you want to 100% personalize your server section on a per-`rap.host` basis, add your server configuration in a file under `/etc/nginx/vhost.d`
+The file should use the suffix `_server`.
+
+For example, if you have a virtual host named `app.example.com` and you have configured a proxy_cache `my-cache` in another custom file, you could tell it to use a proxy cache as follows:
+
+    $ docker run -d -p 80:80 -p 443:443 -v /path/to/vhost.d:/etc/nginx/vhost.d:ro adi90x/rancher-active-proxy
+
+You should therefore have a file `app.example.com_server` in the `/etc/nginx/vhost.d` folder that contain the whole server block you want to use :
+
+```
+server {
+        server_name app.example.com
+        listen 80;
+        access_log /var/log/nginx/access.log vhost;
+        
+        location / {
+                proxy_pass http://app.example.com;
+        }
+}
+
+```
+
+If you are using multiple hostnames for a single container (e.g. `rap.host=example.com,www.example.com`), the virtual host configuration file must exist for each hostname.
+If you would like to use the same configuration for multiple virtual host names, you can use a symlink.
+
+#### Per-host server default configuration
+
+If you want most of your virtual hosts to use a default single `server` block configuration and then override on a few specific ones, add a `/etc/nginx/vhost.d/default_server` file.
+This file will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}_server` file associated with it.
+
+
 ***
 
 The below part is mostly taken from jwilder/nginx-proxy [README](https://github.com/jwilder/nginx-proxy/blob/master/README.md) and modify to reflect Rancher Active Proxy
