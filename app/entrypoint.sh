@@ -25,7 +25,7 @@ function check_dh_group {
         mv /etc/letsencrypt/.dhparam.pem.tmp /etc/letsencrypt/dhparam.pem || exit 1
     fi
 }
-
+    unset LETSENCRYPT_CONTAINERS
     source /app/functions.sh
 
     [[ $DEBUG == true ]] && set -x
@@ -37,9 +37,10 @@ function check_dh_group {
     
     #Recreating needed certs
     rancher-gen --onetime /app/letsencrypt.tmpl /app/letsencrypt.conf
+
     source /app/letsencrypt.conf
-    
-    if [[ -s /app/letsencrypt.conf ]] && [[ -n "$LETSENCRYPT_CONTAINERS" ]]; then
+
+    if [[ -s /app/letsencrypt.conf ]] && [[ ${LETSENCRYPT_CONTAINERS:-"EMPTY"} != "EMPTY" ]]; then
 
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
     

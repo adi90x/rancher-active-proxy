@@ -4,11 +4,12 @@ source /app/functions.sh
 
 update_certs() {
 
-    [[ ! -f /app/letsencrypt.conf ]] && return
-
+    [[ ! -s /app/letsencrypt.conf ]] && return
+    
     # Load relevant container settings
     unset LETSENCRYPT_CONTAINERS
-    source /app/letsencrypt.conf
+
+    [[ ! -n "$LETSENCRYPT_CONTAINERS" ]] && return	
 
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
 
