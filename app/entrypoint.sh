@@ -37,10 +37,10 @@ function check_dh_group {
     
     #Recreating needed certs
     rancher-gen --onetime /app/letsencrypt.tmpl /app/letsencrypt.conf
-    
-    if [[ -s /app/letsencrypt.conf ]]; then
     source /app/letsencrypt.conf
     
+    if [[ -s /app/letsencrypt.conf ]] && [[ -n "$LETSENCRYPT_CONTAINERS" ]]; then
+
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
     
     host_varname="LETSENCRYPT_${cid}_HOST"
