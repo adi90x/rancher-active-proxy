@@ -37,6 +37,8 @@ function check_dh_group {
     
     #Recreating needed certs
     rancher-gen --onetime /app/letsencrypt.tmpl /app/letsencrypt.conf
+    
+    if [[ -s /app/letsencrypt.conf ]]; then
     source /app/letsencrypt.conf
     
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
@@ -52,8 +54,9 @@ function check_dh_group {
 		setup_certs $dom $certname
 	done
 	domainparam=""
-    
     done
+    
+    fi
     
     #Deleting default.conf if it is there
     rm -f /etc/nginx/conf.d/default.conf
