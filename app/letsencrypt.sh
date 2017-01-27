@@ -8,7 +8,8 @@ update_certs() {
     
     # Load relevant container settings
     unset LETSENCRYPT_CONTAINERS
-
+    source /app/letsencrypt.conf
+    
     [[ ! -n "$LETSENCRYPT_CONTAINERS" ]] && return	
 
     for cid in "${LETSENCRYPT_CONTAINERS[@]}"; do
