@@ -1,10 +1,11 @@
 FROM nginx:alpine
 MAINTAINER Adrien M amaurel90@gmail.com
 
-ENV DEBUG=false RAP_DEBUG="info" 
+ENV DEBUG=false RAP_DEBUG="info"
 ARG VERSION_RANCHER_GEN="artifacts/master"
 
-RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl
+RUN apk add --no-cache nano ca-certificates unzip wget certbot bash openssl avahi avahi-tools coreutils \
+    && rm -rf /etc/avahi/services/*
 
 # Install Forego & Rancher-Gen-RAP
 ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
@@ -14,8 +15,9 @@ RUN wget "https://gitlab.com/adi90x/rancher-gen-rap/builds/$VERSION_RANCHER_GEN/
 	&& chmod +x /usr/local/bin/rancher-gen \
 	&& chmod u+x /usr/local/bin/forego \
 	&& rm -f /tmp/rancher-gen-rap.zip
-	
-#Copying all templates and script	
+
+#Copying all templates and script
+COPY /app/avahi-daemon.conf /etc/avahi/avahi-daemon.conf
 COPY /app/ /app/
 WORKDIR /app/
 
@@ -24,7 +26,7 @@ RUN chmod +x /app/letsencrypt.sh \
     && mkdir -p /etc/nginx/certs /etc/nginx/vhost.d /etc/nginx/conf.d /usr/share/nginx/html /etc/letsencrypt \
     && echo "daemon off;" >> /etc/nginx/nginx.conf \
     && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf \
-    && chmod u+x /app/remove 
+    && chmod u+x /app/remove
 
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh" ]
 CMD ["forego", "start", "-r"]
