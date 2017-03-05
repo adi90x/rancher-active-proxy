@@ -1,5 +1,5 @@
 {{ define "avahi_host" }}
-{{.IP}}     {{.HOST}}
+{{.IP}}     {{.HOST}}.local
 {{ end }}
 
 {{- range $opt, $services := services | groupByMulti "rap.host" ","}}
@@ -15,7 +15,7 @@
 {{- $avahiName := trimSuffix $host ".local" }}
 {{- if eq $host $avahiName}}
 {{- else }}
-    {{- template "avahi_host" (dict "HOST" $avahiName "IP" "192.168.178.88") }}
+    {{- template "avahi_host" (dict "HOST" $avahiName "IP" $service.Containers.Host.Address) }}
 {{ end -}}
 {{- end -}}
 {{- end }}
