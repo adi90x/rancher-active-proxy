@@ -1,16 +1,6 @@
-{{ define "avahi" }}
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
-<service-group>
-    <name replace-wildcards="yes">{{.NAME}}</name>
-    <service>
-        <type>{{ .TYPE }}</type>
-        <port>{{ .PORT }}</port>
-    </service>
-</service-group>
+{{ define "avahi_host" }}
+{{.IP}}     {{.HOST}}
 {{ end }}
-
-{{- $defaultPort := or (env "DEFAULT_PORT") "80" }}
 
 {{- range $opt, $services := services | groupByMulti "rap.host" ","}}
 {{- $parts := split $opt "=>"}}
@@ -22,21 +12,10 @@
 
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
-{{- $avahiType := .Labels.GetValue "rap.avahi_type" "_http._tcp" -}}
 {{- $avahiName := trimSuffix $host ".local" }}
 {{- if eq $host $avahiName}}
 {{- else }}
-    {{- if ne $destPort ""}}
-        {{- template "avahi" (dict "NAME" $avahiName "TYPE" $avahiType "PORT" $destPort) }}
-    {{- else if .Labels.Exists "rap.port"}}
-        {{- $port := .Labels.GetValue "rap.port" "80" }}
-        {{- template "avahi" (dict "NAME" $avahiName "TYPE" $avahiType "PORT" $port) }}
-    {{- else if eq $addrLen 1 }}
-        {{- $intPort := (first $service.Ports).InternalPort }}
-        {{- template "avahi" (dict "NAME" $avahiName "TYPE" $avahiType "PORT" $intPort) }}
-    {{- else }}
-        {{- template "avahi" (dict "NAME" $avahiName "TYPE" $avahiType "PORT" $defaultPort) }}
-    {{- end }}
+    {{- template "avahi_host" (dict "HOST" $avahiName "IP" "192.168.178.88") }}
 {{ end -}}
 {{- end -}}
 {{- end }}
