@@ -15,7 +15,7 @@
 {{- $avahiName := trimSuffix $host ".local" }}
 {{- if eq $host $avahiName}}
 {{- else }}
-    {{- template "avahi_host" (dict "HOST" $avahiName "IP" $service.Containers.Host.Address) }}
+    {{- template "avahi_host" (dict "HOST" $avahiName "IP" (first $service.Containers).Host.Address) }}
 {{ end -}}
 {{- end -}}
 {{- end }}
