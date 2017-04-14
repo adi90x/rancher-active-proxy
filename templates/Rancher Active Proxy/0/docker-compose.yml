@@ -15,7 +15,7 @@ services:
     - ${PATH}/letsencrypt:/etc/letsencrypt
     tty: true
     ports:
-    - 80:80/tcp
+    - ${DEFAULT_PORT}:80/tcp
     - 443:443/tcp
     labels:
       io.rancher.container.pull_image: always
