@@ -38,7 +38,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 
 |       Label                |            Description         |
 | ---------------------------|------------------------------- |
-| `rap.host`                 | Virtual host to use ( several value could be separate by `,`
+| `rap.host`                 | Virtual host to use ( several value could be separate by `,` )
 | `rap.port`                 | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
 | `rap.proto`                | Protocol use to contact container ( http,https,uwsgi ). Default : `http`
 | `rap.cert_name`            | Certificat name to use for the virtual host. Default `rap.host`
@@ -165,7 +165,7 @@ Do not forget to delete the label on the container before using that script or i
 
 If you are starting it with Rancher do not forget to set Auto Restart : Never (Start Once)
 
-#### Per-host server configuration
+### Per-host server configuration
 
 If you want to 100% personalize your server section on a per-`rap.host` basis, add your server configuration in a file under `/etc/nginx/vhost.d`
 The file should use the suffix `_server`.
@@ -192,7 +192,7 @@ server {
 If you are using multiple hostnames for a single container (e.g. `rap.host=example.com,www.example.com`), the virtual host configuration file must exist for each hostname.
 If you would like to use the same configuration for multiple virtual host names, you can use a symlink.
 
-#### Per-host server default configuration
+### Per-host server default configuration
 
 If you want most of your virtual hosts to use a default single `server` block configuration and then override on a few specific ones, add a `/etc/nginx/vhost.d/default_server` file.
 This file will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}_server` file associated with it.
@@ -244,25 +244,25 @@ If you are running the container in a virtualized environment (Hyper-V, VirtualB
 /path/to/certs must exist in that environment or be made accessible to that environment.
 By default, Docker is not able to mount directories on the host machine to containers running in a virtual machine.
 
-#### Diffie-Hellman Groups
+### Diffie-Hellman Groups
 
 If you have Diffie-Hellman groups enabled, the files should be named after the virtual host with a
 `dhparam` suffix and `.pem` extension. For example, a container with `rap.host=foo.bar.com`
 should have a `foo.bar.com.dhparam.pem` file in the certs directory.
 
-#### Wildcard Certificates
+### Wildcard Certificates
 
 Wildcard certificates and keys should be named after the domain name with a `.crt` and `.key` extension.
 For example `rap.host=foo.bar.com` would use cert name `bar.com.crt` and `bar.com.key`.
 
-#### SNI
+### SNI
 
 If your certificate(s) supports multiple domain names, you can start a container with `rap.cert_name=<name>`
 to identify the certificate to be used.  For example, a certificate for `*.foo.com` and `*.bar.com`
 could be named `shared.crt` and `shared.key`.  A container running with `rap.host=foo.bar.com`
 and `rap.cert_name=shared` will then use this shared cert.
 
-#### How SSL Support Works
+### How SSL Support Works
 
 The SSL cipher configuration is based on [mozilla nginx intermediate profile](https://wiki.mozilla.org/Security/Server_Side_TLS#Nginx) which
 should provide compatibility with clients back to Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1,
@@ -310,7 +310,7 @@ Or you can use an nginx container to create the file ( using OpenSSL as explaine
 
 If you need to configure Nginx beyond what is possible using environment variables, you can provide custom configuration files on either a proxy-wide or per-`rap.host` basis.
 
-#### Replacing default proxy settings
+### Replacing default proxy settings
 
 If you want to replace the default proxy settings for the nginx container, add a configuration file at `/etc/nginx/proxy.conf`. A file with the default settings would
 look like this:
@@ -335,7 +335,7 @@ proxy_set_header Proxy "";
 
 ***NOTE***: The default configuration blocks the `Proxy` HTTP request header from being sent to downstream servers.  This prevents attackers from using the so-called [httpoxy attack](http://httpoxy.org).  There is no legitimate reason for a client to send this header, and there are many vulnerable languages / platforms (`CVE-2016-5385`, `CVE-2016-5386`, `CVE-2016-5387`, `CVE-2016-5388`, `CVE-2016-1000109`, `CVE-2016-1000110`, `CERT-VU#797896`).
 
-#### Proxy-wide
+### Proxy-wide
 
 To add settings on a proxy-wide basis, add your configuration file under `/etc/nginx/conf.d` using a name ending in `.conf`.
 
@@ -353,7 +353,7 @@ Or it can be done by mounting in your custom configuration in your `docker run` 
 
     $ docker run -d -p 80:80 -p 443:443 -v /path/to/my_proxy.conf:/etc/nginx/conf.d/my_proxy.conf:ro adi90x/rancher-active-proxy
 
-#### Per-VIRTUAL_HOST
+### Per-VIRTUAL_HOST
 
 To add settings on a per-`rap.host` basis, add your configuration file under `/etc/nginx/vhost.d`. Unlike in the proxy-wide case, which allows multiple config files with any name ending in `.conf`, the per-`rap.host` file must be named exactly after the `rap.host`.
 
@@ -369,12 +369,12 @@ If you are using multiple hostnames for a single container (e.g. ``rap.host`=exa
     $ { echo 'server_tokens off;'; echo 'client_max_body_size 100m;'; } > /path/to/vhost.d/www.example.com
     $ ln -s /path/to/vhost.d/www.example.com /path/to/vhost.d/example.com
 
-#### Per-VIRTUAL_HOST default configuration
+### Per-VIRTUAL_HOST default configuration
 
 If you want most of your virtual hosts to use a default single configuration and then override on a few specific ones, add those settings to the `/etc/nginx/vhost.d/default` file. This file
 will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}` file associated with it.
 
-#### Per-VIRTUAL_HOST location configuration
+### Per-VIRTUAL_HOST location configuration
 
 To add settings to the "location" block on a per-`rap.host` basis, add your configuration file under `/etc/nginx/vhost.d`
 just like the previous section except with the suffix `_location`.
@@ -389,7 +389,7 @@ If you are using multiple hostnames for a single container (e.g. `rap.host=examp
     $ { echo 'proxy_cache my-cache;'; echo 'proxy_cache_valid  200 302  60m;'; echo 'proxy_cache_valid  404 1m;' } > /path/to/vhost.d/app.example.com_location
     $ ln -s /path/to/vhost.d/www.example.com /path/to/vhost.d/example.com
 
-#### Per-VIRTUAL_HOST location default configuration
+### Per-VIRTUAL_HOST location default configuration
 
 If you want most of your virtual hosts to use a default single `location` block configuration and then override on a few specific ones, add those settings to the `/etc/nginx/vhost.d/default_location` file. This file
 will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}` file associated with it.
