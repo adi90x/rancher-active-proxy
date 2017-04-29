@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bashsh
 
 source /app/functions.sh
 
@@ -28,7 +28,8 @@ update_certs() {
             acme_server="https://acme-v01.api.letsencrypt.org/directory"
         fi
         
-        echo "Using Acme server $acme_server"
+        sleep 30
+        echo "Sleep 30s before Using Acme server $acme_server"
         
         debug=""
         [[ $DEBUG == true ]] && debug+=" -v"
