@@ -136,12 +136,12 @@ If needed you can use Rancher-Active-Proxy to listen for different port.
 
 In this case, you can specify on which port Rancher Active Proxy should listen for a specific hostname :
 
-`docker run -d -l rap.host=foo.bar.com -l rap.listen_http_ports="81,8081" -l rap.port="53" containerexposing/port53`
+`docker run -d -l rap.host=foo.bar.com -l rap.http_listen_ports="81,8081" -l rap.port="53" containerexposing/port53`
 
 In this situation Rancher Active Proxy will listen for request matching `rap.host` on both port `81` and `8081` of you host
 and route those request to port `53` of your container.
 
-Likewise, `rap.listen_https_ports` will work for https request.
+Likewise, `rap.https_listen_ports` will work for https request.
 
 If you are not using port `80` and `443` at all you won't be able to use Let's Encrypt Automatic certificates.
 
