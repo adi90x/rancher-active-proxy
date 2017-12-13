@@ -1,10 +1,10 @@
 {{ define "upstream" }}
 {{- if .FIRST.Get }}
-    #Acces through rancher managed network
+    #Access through rancher managed network
 	server {{.IP}}:{{.PORT}};
 {{- else -}}
     upstream {{.HOST}} {
-	#Acces through rancher managed network
+	#Access through rancher managed network
 	server {{.IP}}:{{.PORT}};
 {{- end -}}	
 {{ end }}
