@@ -306,6 +306,8 @@ Or you can use an nginx container to create the file ( using OpenSSL as explaine
 
 `docker run -it nginx printf "Username_to_use:$(openssl passwd -crypt Password_to_use)\n" >> /path/to/htpasswd/{rap.host}`
 
+A default htpasswd can be used to secure all hosts using this proxy. Good for development environments to keep prying eyes out. To use, create the htpasswd file named 'default' here: `/etc/nginx/htpasswd/default`.
+
 ### Custom Nginx Configuration
 
 If you need to configure Nginx beyond what is possible using environment variables, you can provide custom configuration files on either a proxy-wide or per-`rap.host` basis.
