@@ -1,12 +1,13 @@
 {{ define "upstream" }}
-{{- if .FIRST.Get }}
-	#Acces through rancher managed network
-	server {{.IP}}:{{.PORT}};
-{{- else -}}
+{{- if not .FIRST.Get -}}
 	upstream {{.HOST}} {
-	#Acces through rancher managed network
+{{- end -}}
+{{ if .ONLINE }}
+	# Access through rancher managed network
 	server {{.IP}}:{{.PORT}};
-{{- end -}}	
+{{- else }}
+	# {{.IP}} is not running or is unhealthy
+{{- end }}
 {{ end }}
 
 {{ define "server" }}
@@ -297,20 +298,21 @@ server {
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
 {{- range $cont := $service.Containers | filterHost $host_filter }}
+		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
 		{{- if ne $destPort ""}}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $destPort) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $destPort) }}
 			{{- $_ := $alive.Set true }}
 		{{- else if .Labels.Exists "rap.port"}}
 			{{- $port := .Labels.GetValue "rap.port" "80" }}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $port) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $port) }}
 			{{- $_ := $alive.Set true }}
 		{{- else if eq $addrLen 1 }}
 			{{- $intport := (first $service.Ports).InternalPort }}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $intport) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $intport) }}
 			{{- $_ := $alive.Set true }}
 		{{- else }}
-			 {{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $default_port) }}
-			 {{- $_ := $alive.Set true }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $default_port) }}
+			{{- $_ := $alive.Set true }}
 		{{- end }}
 {{- end -}}
 {{- end -}}
@@ -337,19 +339,20 @@ server {
 
 {{ range $cont := $conts }}
 {{- $addrLen := len $cont.Ports }}
+		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
 		{{- if ne $destPort ""}}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $destPort) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $destPort) }}
 			{{- $_ := $alive.Set true }}
 		{{- else if .Labels.Exists "rap.port"}}
 			{{- $port := .Labels.GetValue "rap.port" "80" }}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $port) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $port) }}
 			{{- $_ := $alive.Set true }}
 		{{- else if eq $addrLen 1 }}
 			{{- $intport := (first $cont.Ports).InternalPort }}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $intport ) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $intport ) }}
 			{{- $_ := $alive.Set true }}
 		{{- else }}
-			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "PORT" $default_port) }}
+			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $default_port) }}
 			{{- $_ := $alive.Set true }}
 		{{- end }}
 {{- end -}}
