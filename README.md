@@ -1,7 +1,7 @@
 ![nginx latest](https://img.shields.io/badge/nginx-latest-brightgreen.svg)[![build status](https://gitlab.com/adi90x/rancher-active-proxy/badges/master/build.svg)](https://gitlab.com/adi90x/rancher-active-proxy/commits/master)  ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)   [![Docker Pulls](https://img.shields.io/docker/pulls/adi90x/rancher-active-proxy.svg)](https://hub.docker.com/r/adi90x/rancher-active-proxy/)  [![Docker Automated buil](https://img.shields.io/docker/automated/adi90x/rancher-active-proxy.svg)](https://hub.docker.com/r/adi90x/rancher-active-proxy/)
 
 
-## Rancher Active Proxy 
+## Rancher Active Proxy
 
 Rancher Active Proxy is an all-in-one reverse proxy for [Rancher](http://rancher.com), supporting Letsencrypt out of the box !
 
@@ -46,17 +46,18 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `rap.le_host`              | Certificat to create/renew with Letsencrypt
 | `rap.le_email`             | Email to use for Letsencrypt
 | `rap.le_test  `            | Set to true to use stagging letsencrypt server
+| `rap.le_bypass`            | Set to true to create a special bypass to use LE
 | `rap.http_listen_ports`    | External Port you want Rancher-Active-Proxy to listen http for this server ( Default : `80` )
 | `rap.https_listen_ports`   | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
 | `rap.server_tokens`    	 | Enable to specify the server_token value per container
-| `rap.client_max_body_size` | Enable to specify the client_max_body_size directive per container 
+| `rap.client_max_body_size` | Enable to specify the client_max_body_size directive per container
 
 #### Summary of environment variable available for Rancher Active Proxy.
 
 |       Label        |            Description         |
 | ------------------ | ------------------------------ |
-| `DEBUG`            | Set to `true` to enable more output. Default : False. 
-| `CRON`             | Cron like expression to define when certs are renew. Default : `0 2 * * *` 
+| `DEBUG`            | Set to `true` to enable more output. Default : False.
+| `CRON`             | Cron like expression to define when certs are renew. Default : `0 2 * * *`
 | `DEFAULT_HOST`     | Default Nginx host.
 | `DEFAULT_EMAIL`    | Default Email for Letsencrypt.
 | `RAP_DEBUG` 		 | Define Rancher-Gen-Rap verbosity (Valid values: "debug", "info", "warn", and "error"). Default: `info`
@@ -68,7 +69,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 |       Path            |            Description         |
 | --------------------- | ------------------------------ |
 | `/etc/letsencrypt`    | Folder with all certificates used for https and Letsencrypt parameters
-| `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`) 
+| `/etc/nginx/htpasswd` | Basic Authentication Support ( file should be `rap.host`)
 | `/etc/nginx/vhost.d`  | Specifc vhost configuration ( file should be `rap.host`) . Location configuration should end by `_location`
 
 #### Special Attention for standalone containers
@@ -110,9 +111,14 @@ The certificate created will be name `admin.foo.com` but symlink will be create 
 If your container exposes multiple ports, Rancher Active Proxy will use `rap.port` label, then use the expose port if there is only one port exposed, or default to `DEFAULT_PORT` environmental variable ( which is set by default to `80` ).
 Or you can try your hand at the Advanced `rap.host` syntax.
 
+### Special ByPass for Let's Encrypt
+
+If your container use its own letsencrypt process to get some certificates
+Set `rap.le_bypass` to `true` to add a location to the http server block to forward `/.well-known/acme-certificate/` to upstream through http instead of redirect it to https
+
 ### Advanced `rap.host` syntax
 
-Using the Advanced `rap.host` syntax you can specify multiple host names to each go to their own backend port. 
+Using the Advanced `rap.host` syntax you can specify multiple host names to each go to their own backend port.
 Basically provides support for `rap.host`, `rap.port`, and `rap.proto` all in one field.
 
 For example, given the following:
@@ -126,7 +132,7 @@ This would yield 3 different server/upstream configurations...
  1. Requests for api.example.com would route to this container's port 80 via http
  2. Requests for api-admin.example.com would route to this containers port 8001 via http
  3. Requests for secure.example.com would route to this containers port 8443 via https
- 
+
 
 ### Multiple Listening Port
 
@@ -181,7 +187,7 @@ server {
         server_name app.example.com
         listen 80;
         access_log /var/log/nginx/access.log vhost;
-        
+
         location / {
                 proxy_pass http://app.example.com;
         }
@@ -398,8 +404,6 @@ will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.
 
 ## Contributing
 
-Do not hesitate to send issues or pull requests ! 
+Do not hesitate to send issues or pull requests !
 
 Automated Gitlab CI is used to build Rancher Active Proxy therefore send any pull request/issues to [Rancher Active Proxy on Gitlab.com](https://gitlab.com/adi90x/rancher-active-proxy/)
-
-
