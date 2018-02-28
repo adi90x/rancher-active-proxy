@@ -205,6 +205,10 @@ If you would like to use the same configuration for multiple virtual host names,
 If you want most of your virtual hosts to use a default single `server` block configuration and then override on a few specific ones, add a `/etc/nginx/vhost.d/default_server` file.
 This file will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}_server` file associated with it.
 
+### Limit RAP to some containers
+
+If you want an RAP instance to only publish some specific containers/service, you can start the RAP container with environment variable `RAP_NAME = example`
+In that situation, all containers to be publish by this instance of RAP should have a label `rap.rap_name = example`
 
 ***
 
