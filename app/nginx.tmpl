@@ -297,6 +297,7 @@ server {
 
 {{- $default_port := or (env "DEFAULT_PORT") "80" }}
 {{- $host_filter := or (env "SPECIFIC_HOST") "*" }}
+{{- $rap_name := or (env "RAP_NAME") "*" }}
 
 # Rancher Services config
 
@@ -311,7 +312,7 @@ server {
 
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
-{{- range $cont := $service.Containers | filterHost $host_filter }}
+{{- range $cont := $service.Containers | filterHost $host_filter | whereLabelMatches $rap_name}}
 		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
 		{{- if ne $destPort ""}}
 			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $destPort) }}
@@ -351,7 +352,7 @@ server {
 {{- $destPort := last $destParts }}
 {{- $alive := cell false }}
 
-{{ range $cont := $conts }}
+{{ range $cont := $conts | whereLabelMatches $rap_name}}
 {{- $addrLen := len $cont.Ports }}
 		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
 		{{- if ne $destPort ""}}
