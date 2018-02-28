@@ -209,6 +209,7 @@ This file will be used on any virtual host which does not have a `/etc/nginx/vho
 
 If you want an RAP instance to only publish some specific containers/service, you can start the RAP container with environment variable `RAP_NAME = example`
 In that situation, all containers to be publish by this instance of RAP should have a label `rap.rap_name = example`
+If a container should be publish by several RAP instance just use a label matching regex like `rap.rap_name = internal,external` to be publish by RAP instance named `internal` or `external`
 
 ***
 
