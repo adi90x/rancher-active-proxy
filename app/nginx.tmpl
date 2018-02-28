@@ -343,7 +343,7 @@ server {
 # Standalone containers config
 
 {{ if or (eq $host_filter "*") (eq host.Name $host_filter) }}
-{{- range $opt, $conts := host.Containers | groupByMultiFilter "" "rap.host" ","}}
+{{- range $opt, $conts := host.Containers | filterLabel "rap.rap_name" $rap_name | groupByMultiFilter "" "rap.host" ","}}
 {{- $parts := split $opt "=>"}}
 {{- $host := first $parts | trim }}
 {{- $dest := last $parts | trim }}
@@ -352,7 +352,7 @@ server {
 {{- $destPort := last $destParts }}
 {{- $alive := cell false }}
 
-{{ range $cont := $conts | filterLabel "rap.rap_name" $rap_name}}
+{{ range $cont := $conts }}
 {{- $addrLen := len $cont.Ports }}
 		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
 		{{- if ne $destPort ""}}
