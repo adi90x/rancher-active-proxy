@@ -51,6 +51,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `rap.https_listen_ports`   | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
 | `rap.server_tokens`    	 | Enable to specify the server_token value per container
 | `rap.client_max_body_size` | Enable to specify the client_max_body_size directive per container
+| `rap.rap_name`             | If RAP_NAME is specified for a RAP instance only container with label value matching RAP_NAME value will be publish
 
 #### Summary of environment variable available for Rancher Active Proxy.
 
@@ -63,6 +64,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `RAP_DEBUG` 		 | Define Rancher-Gen-Rap verbosity (Valid values: "debug", "info", "warn", and "error"). Default: `info`
 | `DEFAULT_PORT` 	 | Default port use for containers ( Default : 80 )
 | `SPECIFIC_HOST` 	 | Limit RAP to only containers of a specific host name
+| `RAP_NAME` 	     | If specify RAP will only publish service with `rap.rap_name = RAP_NAME`
 
 #### Quick Summary of interesting volume to mount.
 
@@ -203,6 +205,10 @@ If you would like to use the same configuration for multiple virtual host names,
 If you want most of your virtual hosts to use a default single `server` block configuration and then override on a few specific ones, add a `/etc/nginx/vhost.d/default_server` file.
 This file will be used on any virtual host which does not have a `/etc/nginx/vhost.d/{rap.host}_server` file associated with it.
 
+### Limit RAP to some containers
+
+If you want an RAP instance to only publish some specific containers/service, you can start the RAP container with environment variable `RAP_NAME = example`
+In that situation, all containers to be publish by this instance of RAP should have a label `rap.rap_name = example`
 
 ***
 
