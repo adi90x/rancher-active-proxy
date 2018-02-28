@@ -1,5 +1,6 @@
 ### Last Change ###
 
+28/02/17 : v0.9.3 - Add Let's Encrypt Bypass to enable standalone LE to work behind RAP.
 26/01/17 : v0.9.2 - Avoid error if Let's Encrypt conf is empty on startup.
 26/01/17 : v0.9.1 - Create Let's Encrypt folder on build.
 26/01/17 : v0.9.0 - Add support for manual server block configuration.
