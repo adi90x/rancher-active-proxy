@@ -51,6 +51,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running rancher-
 | `rap.https_listen_ports`   | External Port you want Rancher-Active-Proxy to listen https for this server ( Default : `443` )
 | `rap.server_tokens`    	 | Enable to specify the server_token value per container
 | `rap.client_max_body_size` | Enable to specify the client_max_body_size directive per container
+| `rap.rap_name`             | If RAP_NAME is specified for a RAP instance only container with label value matching RAP_NAME value will be publish
 
 #### Summary of environment variable available for Rancher Active Proxy.
 
