@@ -280,7 +280,7 @@ server {
 	}
 	
 	{{- if (ne $acme_internal "") }}
-	location /.well-known {
+	location /.well-known { # This allows proxy acme requests to pass through to another server.
 		proxy_pass http://{{ $acme_internal }}/.well-known;
 		proxy_set_header X-Real-IP $remote_addr;
       		proxy_set_header Host $host;
