@@ -275,7 +275,7 @@ server {
 		{{- end }}
 		{{- end }}
 	access_log /var/log/nginx/access.log vhost;
-	{{- if (ne $acme_internal "") }}
+	{{ if (ne $acme_internal "") -}}
 	location / {
 		return 503;
 	}
@@ -286,8 +286,7 @@ server {
       		proxy_set_header Host $host;
       		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
-	{{- end }}
-	{{- if (eq $acme_internal) }}
+	{{- else -}}
 	return 503;
 	{{- end }}
 }
