@@ -274,7 +274,7 @@ server {
 		{{- end }}
 		{{- end }}
 	access_log /var/log/nginx/access.log vhost;
-	{{ - if (env ACME_INTERNAL) }}
+	{{- if (env ACME_INTERNAL) }}
 	location / {
 		return 503;
 	}
