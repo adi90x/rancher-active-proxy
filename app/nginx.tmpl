@@ -274,12 +274,14 @@ server {
 		{{- end }}
 		{{- end }}
 	access_log /var/log/nginx/access.log vhost;
-	{{ - if (env $acme_internal) }}
+	{{ - if (env ACME_INTERNAL) }}
 	location / {
 		return 503;
 	}
 	location /.well-known {
+		{{- with $acme_internal := (env ACME_INTERNAL) }}
 		proxy_pass $acme_internal
+		{{- end }}
 		proxy_set_header X-Real-IP $remote_addr;
       		proxy_set_header Host $host;
       		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
