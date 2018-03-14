@@ -60,7 +60,7 @@ server {
   }
   {{- if $le_bypass }}
   location ^~ /.well-known/acme-challenge/ {
-		   	proxy_pass http://shost$request_uri;
+		   	proxy_pass http://$host$request_uri;
   }
   {{- end }}
 
