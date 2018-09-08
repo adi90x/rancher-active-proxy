@@ -37,6 +37,7 @@ include /etc/nginx/vhost.d/default_server;
 {{- $token := .FIRST.Labels.GetValue "rap.server_tokens" "" }}
 {{- $body_size := .FIRST.Labels.GetValue "rap.client_max_body_size" "" }}
 {{- $le_bypass := .FIRST.Labels.GetValue "rap.le_bypass" "" }}
+{{- $timeout := .FIRST.Labels.GetValue "rap.timeout" "" }}
 
 {{- $is_https := (and (ne $https_method "nohttps") (ne $cert "") (exists (printf "/etc/nginx/certs/%s.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.key" $cert))) }}
 
@@ -110,14 +111,20 @@ server {
 		{{- if eq $proto "uwsgi" }}
 		include uwsgi_params;
 		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
+		{{- if $timeout }}
+		uwsgi_read_timeout {{ $timeout }}s;
+		{{- end }}
 		{{- else }}
 		proxy_pass {{ trim $proto }}://{{ trim $host }};
+		{{- if $timeout }}
+		proxy_read_timeout {{ $timeout }}s;
+		{{- end }}
 		{{- end }}
 		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
-    {{- else if (exists (printf "/etc/nginx/htpasswd/%s" "default")) }}
-    auth_basic	"Restricted {{ $host }}";
+		{{- else if (exists (printf "/etc/nginx/htpasswd/%s" "default")) }}
+		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" "default") }};
 		{{- end }}
 			{{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
@@ -157,14 +164,20 @@ server {
 		{{- if eq $proto "uwsgi" }}
 		include uwsgi_params;
 		uwsgi_pass {{ trim $proto }}://{{ trim $host }};
+		{{- if $timeout }}
+		uwsgi_read_timeout {{ $timeout }}s;
+		{{- end }}
 		{{- else }}
 		proxy_pass {{ trim $proto }}://{{ trim $host }};
+		{{- if $timeout }}
+		proxy_read_timeout {{ $timeout }}s;
+		{{- end }}
 		{{- end }}
 		{{- if (exists (printf "/etc/nginx/htpasswd/%s" $host)) }}
 		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
-    {{- else if (exists (printf "/etc/nginx/htpasswd/%s" "default")) }}
-    auth_basic	"Restricted {{ $host }}";
+		{{- else if (exists (printf "/etc/nginx/htpasswd/%s" "default")) }}
+		auth_basic	"Restricted {{ $host }}";
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" "default") }};
 		{{- end }}
 			{{- if (exists (printf "/etc/nginx/vhost.d/%s_location" $host)) }}
