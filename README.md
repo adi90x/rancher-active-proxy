@@ -41,6 +41,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running `rancher
 | `rap.host`                 | Virtual host to use ( several value could be separate by `,` )
 | `rap.port`                 | Port of the container to use ( only needed if several port are exposed ). Default `Expose Port` or `80`
 | `rap.proto`                | Protocol used to contact container ( http,https,uwsgi ). Default : `http`
+| `rap.timeout`              | Timeout for reading from this container ( in seconds ). Default : nginx default (60s)
 | `rap.cert_name`            | Certificate name to use for the virtual host. Default `rap.host`
 | `rap.https_method`         | Https method (redirect, noredirect, nohttps). Default : `redirect`
 | `rap.le_host`              | Certificate to create/renew with Letsencrypt
