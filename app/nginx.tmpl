@@ -322,11 +322,15 @@ server {
 {{- $destProto := first $destParts }}
 {{- $destPort := last $destParts }}
 {{- $alive := cell false }}
+{{- $anyHealthy := cell false }}
 
 {{range $service := $services}}
 {{- $addrLen := len $service.Ports }}
 {{- range $cont := $service.Containers | filterHost $host_filter | filterLabel "rap.rap_name" $rap_name}}
 		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
+		{{- if $online }}
+			{{- $_ := $anyHealthy.Set true }}
+		{{- end }}
 		{{- if ne $destPort ""}}
 			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $destPort) }}
 			{{- $_ := $alive.Set true }}
@@ -345,7 +349,9 @@ server {
 {{- end -}}
 {{- end -}}
 {{- if $alive.Get }}
-	server localhost down;
+	{{- if not $anyHealthy.Get }}
+		server localhost down;
+	{{- end }}
 }
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $services)  "PROTO" $destProto) }}
@@ -364,10 +370,14 @@ server {
 {{- $destProto := first $destParts }}
 {{- $destPort := last $destParts }}
 {{- $alive := cell false }}
+{{- $anyHealthy := cell false }}
 
 {{ range $cont := $conts }}
 {{- $addrLen := len $cont.Ports }}
 		{{- $online := (and (or (eq .Health "") (eq .Health "healthy")) (eq .State "running")) -}}
+		{{- if $online }}
+			{{- $_ := $anyHealthy.Set true }}
+		{{- end }}
 		{{- if ne $destPort ""}}
 			{{- template "upstream" (dict "HOST" $host "FIRST" $alive "IP" $cont.Address "ONLINE" $online "PORT" $destPort) }}
 			{{- $_ := $alive.Set true }}
@@ -385,7 +395,9 @@ server {
 		{{- end }}
 {{- end -}}
 {{- if $alive.Get }}
-	server localhost down;
+	{{- if not $anyHealthy.Get }}
+		server localhost down;
+	{{- end }}
 }
 
 {{ template "server" (dict "HOST" $host "FIRST" (first $conts)  "PROTO" $destProto) }}
