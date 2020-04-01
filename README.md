@@ -66,6 +66,7 @@ Provided your DNS is setup to forward foo.bar.com to the a host running `rancher
 | `DEFAULT_PORT` 	 | Default port use for containers ( Default : `80` )
 | `SPECIFIC_HOST` 	 | Limit RAP to only containers of a specific host name
 | `RAP_NAME` 	     | If specify RAP will only publish service with `rap.rap_name = RAP_NAME`
+| `ACME_INTERNAL` 	 | Enable passing ACME request to another RAP instance ( check PR #48)
 
 #### Quick Summary of interesting volume to mount.
 
