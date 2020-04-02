@@ -278,7 +278,7 @@ proxy_set_header Proxy "";
 {{- $https_ports_stand := host.Containers | getAllLabelValue "" "rap.https_listen_ports" ","}}
 {{- $https_ports := concatenateUnique $https_ports_services $https_ports_stand }}
 
-{{- $acme_internal := (env "ACME_INTERNAL") "" }}
+{{- $acme_internal := or (env "ACME_INTERNAL") "" }}
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 80;
@@ -291,7 +291,7 @@ server {
 	location / {
 		return 503;
 	}
-	
+
 	{{- if (ne $acme_internal "") }}
 	location /.well-known { # This allows proxy acme requests to pass through to another server.
 		proxy_pass http://{{ $acme_internal }}/.well-known;
